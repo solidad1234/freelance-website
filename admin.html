@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal · First Class Writers Hub</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root {
+      --primary-blue: #003b6f;
+      --primary-orange: #f7941e;
+      --bg-dark: #0f172a;
+      --bg-light: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-dark: #1e293b;
+      --text-gray: #64748b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg-light); color: var(--text-dark); min-height: 100vh; }
+
+    /* Admin Navbar */
+    .admin-nav {
+      background: var(--primary-blue);
+      color: white;
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .admin-nav .logo { font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .admin-nav .logo i { color: var(--primary-orange); }
+    .admin-user-info { display: flex; align-items: center; gap: 15px; }
+    .btn-admin-logout {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .btn-admin-logout:hover { background: rgba(255, 255, 255, 0.25); }
+
+    /* Admin Container */
+    .admin-container { max-width: 1300px; margin: 2rem auto; padding: 0 1.5rem; }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+    .stat-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .icon-total { background: #e0f2fe; color: #0284c7; }
+    .icon-pending { background: #fef3c7; color: #d97706; }
+    .icon-progress { background: #dbeafe; color: #2563eb; }
+    .icon-completed { background: #d1fae5; color: #059669; }
+    .stat-info h3 { font-size: 1.8rem; font-weight: 800; color: var(--primary-blue); }
+    .stat-info p { font-size: 0.85rem; color: var(--text-gray); font-weight: 600; }
+
+    /* Table & Filter Bar */
+    .admin-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+    .admin-card-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .admin-card-header h2 { font-size: 1.25rem; color: var(--primary-blue); font-weight: 700; }
+
+    .filter-tools { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .search-input {
+      padding: 8px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      outline: none;
+      font-size: 0.9rem;
+      width: 220px;
+    }
+    .status-filter-select {
+      padding: 8px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      outline: none;
+      font-size: 0.9rem;
+      background: white;
+    }
+
+    /* Orders Table */
+    .table-responsive { width: 100%; overflow-x: auto; }
+    .orders-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .orders-table th {
+      background: #f8fafc;
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .orders-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+    .orders-table tr:hover { background: #f8fafc; }
+
+    .client-info strong { display: block; color: var(--primary-blue); }
+    .client-info small { color: var(--text-gray); font-size: 0.8rem; }
+
+    .status-select-inline {
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .btn-chat-open {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+    .btn-chat-open:hover { background: #002b52; }
+
+    .attachment-pill {
+      display: inline-block;
+      background: #f1f5f9;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--primary-blue);
+      text-decoration: none;
+      margin-right: 4px;
+      margin-bottom: 4px;
+      border: 1px solid #cbd5e1;
+    }
+    .attachment-pill:hover { background: #e2e8f0; }
+
+    /* Admin Login Box */
+    .admin-login-box {
+      max-width: 400px;
+      margin: 5rem auto;
+      background: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 59, 111, 0.12);
+      text-align: center;
+    }
+    .admin-login-box h2 { color: var(--primary-blue); margin-bottom: 0.5rem; }
+    .admin-login-box p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    /* Chat Drawer Modal */
+    .chat-drawer {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 480px;
+      height: 100%;
+      background: white;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.15);
+      z-index: 9999;
+      flex-direction: column;
+    }
+    .chat-drawer.show { display: flex; }
+    .chat-drawer-header {
+      padding: 1.2rem 1.5rem;
+      background: var(--primary-blue);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-drawer-body { flex: 1; padding: 1.5rem; overflow-y: auto; background: #f8fafc; }
+    .chat-drawer-footer { padding: 1rem 1.5rem; background: white; border-top: 1px solid var(--border-color); display: flex; gap: 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Navbar -->
+  <nav class="admin-nav">
+    <div class="logo">
+      <i class="fas fa-shield-alt"></i> First Class Writers Hub · Admin Portal
+    </div>
+    <div class="admin-user-info" id="adminNavUser">
+      <span id="adminNameDisplay">Admin</span>
+      <button class="btn-admin-logout" style="background: rgba(247, 148, 30, 0.2); border-color: var(--primary-orange); cursor: pointer;" onclick="openAdminPassModal()"><i class="fas fa-key"></i> Change Password</button>
+      <button class="btn-admin-logout" onclick="handleAdminLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </nav>
+
+  <!-- Login Form View (Shown if not logged in as Admin) -->
+  <div id="adminLoginView" class="admin-login-box" style="display: none;">
+    <h2><i class="fas fa-user-shield" style="color: var(--primary-orange);"></i> Admin Login</h2>
+    <p>Sign in with your administrator credentials</p>
+    <div id="adminAlert" class="alert alert-danger" style="display: none;"></div>
+    <form id="adminLoginForm">
+      <div class="auth-form-group" style="text-align: left;">
+        <label>Admin Email</label>
+        <input type="email" id="adminEmail" value="firstclasswritersk@gmail.com" required>
+      </div>
+      <div class="auth-form-group" style="text-align: left;">
+        <label>Password</label>
+        <input type="password" id="adminPassword" placeholder="Enter admin password" required>
+      </div>
+      <button type="submit" class="btn-auth-submit"><i class="fas fa-key"></i> Log In to Portal</button>
+    </form>
+  </div>
+
+  <!-- Main Dashboard View -->
+  <div id="adminDashboardView" class="admin-container" style="display: none;">
+    
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon icon-total"><i class="fas fa-folder-open"></i></div>
+        <div class="stat-info">
+          <h3 id="statTotalOrders">0</h3>
+          <p>TOTAL ORDERS</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-pending"><i class="fas fa-clock"></i></div>
+        <div class="stat-info">
+          <h3 id="statPendingOrders">0</h3>
+          <p>PENDING REVIEW</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-progress"><i class="fas fa-tasks"></i></div>
+        <div class="stat-info">
+          <h3 id="statInProgressOrders">0</h3>
+          <p>IN PROGRESS</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-completed"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+          <h3 id="statCompletedOrders">0</h3>
+          <p>COMPLETED</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Management Card -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h2><i class="fas fa-list-alt"></i> Assignments & Client Orders</h2>
+        <div class="filter-tools">
+          <input type="text" id="adminSearchInput" class="search-input" placeholder="Search order #, client, topic..." onkeyup="filterAdminOrders()">
+          <select id="adminStatusFilter" class="status-filter-select" onchange="filterAdminOrders()">
+            <option value="ALL">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <button class="btn-chat-open" onclick="loadAdminOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Client</th>
+              <th>Subject / Topic</th>
+              <th>Instructions</th>
+              <th>Attachments</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrdersTableBody">
+            <!-- Populated by admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chat Drawer Side Modal -->
+  <div class="chat-drawer" id="adminChatDrawer">
+    <div class="chat-drawer-header">
+      <div>
+        <h3 id="drawerOrderTitle">Chat - Order #2001</h3>
+        <small id="drawerClientTitle" style="opacity: 0.85;">Client</small>
+      </div>
+      <button class="close-auth-modal" style="color: white; background: rgba(255,255,255,0.2);" onclick="closeAdminChatDrawer()">&times;</button>
+    </div>
+    <div class="chat-drawer-body" id="adminChatMessages">
+      <!-- Chat bubbles -->
+    </div>
+    <div class="chat-drawer-footer">
+      <textarea id="adminChatInput" placeholder="Type a message to reply to client..." rows="1" style="flex:1; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); outline: none;"></textarea>
+      <button class="btn-chat-open" id="adminSendChatBtn"><i class="fas fa-paper-plane"></i> Send</button>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="auth-modal" id="orderDetailsModal" style="display: none;">
+    <div class="auth-modal-content" style="max-width: 650px; text-align: left;">
+      <div class="auth-modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <div>
+          <h3 id="modalOrderNumber" style="margin:0; color: var(--primary-blue); display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-file-alt" style="color: var(--primary-orange);"></i> Order Details
+          </h3>
+          <small id="modalOrderSubmitted" style="color: #64748b; font-weight: normal;"></small>
+        </div>
+        <button class="close-auth-modal" onclick="closeOrderDetailsModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1.25rem;">
+        <!-- Client & Status Row -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; background: #f8fafc; padding: 1rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+          <div>
+            <strong style="color: var(--primary-blue); font-size: 1rem;" id="modalClientName">Client Name</strong>
+            <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;" id="modalClientEmail"><i class="fas fa-envelope"></i> email@example.com</div>
+            <div style="font-size: 0.85rem; color: #64748b; margin-top: 2px;" id="modalClientPhone"><i class="fas fa-phone"></i> +1 234 567 890</div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 0.75rem; color: #64748b; display: block; margin-bottom: 4px;">CURRENT STATUS</span>
+            <span id="modalOrderStatusBadge" class="status-badge">Pending</span>
+          </div>
+        </div>
+
+        <!-- Subject / Topic -->
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Subject / Topic</label>
+          <div id="modalOrderSubject" style="font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); margin-top: 4px;"></div>
+        </div>
+
+        <!-- Full Instructions -->
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Assignment Instructions</label>
+          <div id="modalOrderInstructions" style="margin-top: 6px; padding: 1rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; max-height: 250px; overflow-y: auto; white-space: pre-wrap; font-size: 0.9rem; color: #334155; line-height: 1.6;"></div>
+        </div>
+
+        <!-- Attachments Section -->
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Attached Files</label>
+          <div id="modalOrderAttachments" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px;">
+            <!-- Attachment download buttons inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <button class="btn-chat-open" id="modalOpenChatBtn"><i class="fas fa-comments"></i> Open Order Chat</button>
+        <button onclick="closeOrderDetailsModal()" style="padding: 8px 16px; background: #94a3b8; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Change Password Modal -->
+  <div class="auth-modal" id="adminPassModal">
+    <div class="auth-modal-content">
+      <div class="auth-modal-header">
+        <h3><i class="fas fa-key" style="color: var(--primary-orange);"></i> Change Password</h3>
+        <button class="close-auth-modal" onclick="closeAdminPassModal()">&times;</button>
+      </div>
+      <div id="adminPassAlert"></div>
+      <form id="adminPassForm">
+        <div class="auth-form-group">
+          <label>Current Password</label>
+          <input type="password" id="adminCurrentPass" required placeholder="Enter current password">
+        </div>
+        <div class="auth-form-group">
+          <label>New Password</label>
+          <input type="password" id="adminNewPass" required minlength="6" placeholder="Enter new password (min 6 chars)">
+        </div>
+        <div class="auth-form-group">
+          <label>Confirm New Password</label>
+          <input type="password" id="adminConfirmPass" required minlength="6" placeholder="Re-enter new password">
+        </div>
+        <button type="submit" class="btn-auth-submit"><i class="fas fa-save"></i> Update Password</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

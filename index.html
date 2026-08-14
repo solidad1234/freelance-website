@@ -1,0 +1,3499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First Class Writers Hub · Professional Academic Help</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+    }
+
+    :root {
+      --primary-blue: #003b6f;
+      --primary-blue-light: #004d8a;
+      --primary-orange: #f7941e;
+      --primary-orange-light: #f9a83a;
+      --primary-orange-dark: #e07c10;
+      --text-dark: #1a2332;
+      --text-gray: #6c7a8a;
+      --bg-light: #f0f4f8;
+      --white: #ffffff;
+      --shadow: 0 4px 20px rgba(0, 59, 111, 0.08);
+      --shadow-hover: 0 8px 30px rgba(0, 59, 111, 0.15);
+      --success-green: #28a745;
+      --remitly-blue: #0066b3;
+      --online-green: #27ae60;
+      --offline-black: #2d2d2d;
+    }
+
+    /* ===== LANDING PAGE ===== */
+    .landing-page {
+      min-height: 100vh;
+      background: var(--bg-light);
+    }
+    .landing-page.hidden { display: none; }
+
+    /* ===== NAVIGATION ===== */
+    .navbar {
+      background: var(--primary-blue);
+      padding: 0.8rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.online {
+      background: var(--online-green);
+      box-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
+    }
+
+    .status-dot.offline {
+      background: var(--offline-black);
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .status-text {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .navbar .logo .logo-icon {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(135deg, var(--primary-orange), #f9a83a);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+      box-shadow: 0 4px 15px rgba(247, 148, 30, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .navbar .logo .logo-icon::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+    .navbar .logo .logo-icon i {
+      position: relative;
+      z-index: 1;
+    }
+    .navbar .logo .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .navbar .logo .logo-text .main-name {
+      font-size: 1.3rem;
+      letter-spacing: 0.5px;
+    }
+    .navbar .logo .logo-text .main-name span {
+      color: var(--primary-orange);
+    }
+    .navbar .logo .logo-text .tagline {
+      font-size: 0.55rem;
+      opacity: 0.8;
+      letter-spacing: 1px;
+      font-weight: 400;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 500;
+      transition: 0.2s;
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+    }
+    .nav-links a:hover { color: white; background: rgba(255, 255, 255, 0.1); }
+    .nav-cta {
+      background: var(--primary-orange) !important;
+      color: white !important;
+      padding: 0.5rem 1.8rem !important;
+      border-radius: 30px !important;
+      font-weight: 600 !important;
+      transition: 0.2s !important;
+    }
+    .nav-cta:hover {
+      background: var(--primary-orange-dark) !important;
+      transform: scale(1.03);
+      box-shadow: 0 4px 20px rgba(247, 148, 30, 0.4);
+    }
+    .nav-payment {
+      background: #25D366 !important;
+      color: white !important;
+      padding: 0.5rem 1.5rem !important;
+      border-radius: 30px !important;
+      font-weight: 600 !important;
+      transition: 0.2s !important;
+    }
+    .nav-payment:hover {
+      background: #1da851 !important;
+      transform: scale(1.03);
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+    }
+    .nav-payment i { color: white !important; }
+    .hamburger {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: white;
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      height: calc(100vh - 130px) !important;
+      min-height: 580px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 2rem 5% !important;
+      gap: 3rem;
+      flex-wrap: wrap;
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: rgba(247, 148, 30, 0.08);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 50%;
+    }
+    .hero-content {
+      flex: 1;
+      min-width: 300px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-content .trust-badge {
+      background: rgba(247, 148, 30, 0.2);
+      color: var(--primary-orange);
+      padding: 0.4rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(247, 148, 30, 0.3);
+    }
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .hero-content h1 span { color: var(--primary-orange); position: relative; }
+    .hero-content .subtitle {
+      font-size: 1.15rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 1rem 0 1.5rem;
+      line-height: 1.7;
+      max-width: 550px;
+    }
+    .hero-content .subtitle strong { color: white; }
+    .subjects-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    .subjects-tags .tag {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 0.25rem 1rem;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+    }
+    .subjects-tags .tag i { margin-right: 4px; color: var(--primary-orange); }
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0;
+    }
+    .btn-primary {
+      background: var(--primary-orange);
+      color: white;
+      padding: 0.85rem 2.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn-primary:hover {
+      background: var(--primary-orange-dark);
+      transform: scale(1.03);
+      box-shadow: 0 8px 30px rgba(247, 148, 30, 0.4);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      padding: 0.85rem 2.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.03); }
+    .trust-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .trust-stats .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .trust-stats .stat-item i { color: var(--primary-orange); font-size: 1.2rem; }
+    .trust-stats .stat-item span { font-weight: 600; color: white; }
+    .trust-stats .stat-item small { opacity: 0.8; font-size: 0.85rem; }
+    .hero-image {
+      flex: 1;
+      min-width: 280px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-image .image-placeholder {
+      width: 100%;
+      max-width: 450px;
+      height: 300px;
+      background: linear-gradient(135deg, rgba(247, 148, 30, 0.2), rgba(247, 148, 30, 0.05));
+      border-radius: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+    .hero-image .image-placeholder i {
+      font-size: 4rem;
+      color: var(--primary-orange);
+      margin-bottom: 1rem;
+    }
+    .hero-image .image-placeholder h3 { font-size: 1.6rem; font-weight: 600; }
+    .hero-image .image-placeholder p { opacity: 0.8; }
+
+    /* ===== FEATURES BANNER ===== */
+    .features-banner {
+      background: white;
+      padding: 1.2rem 5%;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid #e8ecf0;
+      box-shadow: var(--shadow);
+    }
+    .features-banner .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-dark);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    .features-banner .feature-item i { color: var(--primary-orange); font-size: 1.2rem; }
+
+    /* ===== SECTION COMMON ===== */
+    .section { padding: 4rem 5%; }
+    .section-title {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: var(--primary-orange);
+      margin: 0.5rem auto 0;
+      border-radius: 10px;
+    }
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-gray);
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+    }
+
+    /* ===== SERVICES ===== */
+    .services-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 340px)) !important;
+      justify-content: center !important;
+      gap: 1.5rem !important;
+      max-width: 1200px !important;
+      margin: 0 auto !important;
+    }
+    .service-card {
+      background: white;
+      padding: 2rem 1.5rem;
+      border-radius: 16px;
+      text-align: center;
+      border: 1px solid #eef2f6;
+      transition: 0.3s;
+      cursor: default;
+      box-shadow: var(--shadow);
+    }
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-orange);
+    }
+    .service-card .icon { font-size: 2.5rem; color: var(--primary-orange); margin-bottom: 1rem; }
+    .service-card h4 { color: var(--primary-blue); margin-bottom: 0.5rem; }
+    .service-card p { color: var(--text-gray); font-size: 0.9rem; line-height: 1.5; }
+
+    /* ===== SUBJECTS ===== */
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .subject-item {
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid #eef2f6;
+      transition: 0.2s;
+      font-weight: 500;
+      color: var(--text-dark);
+      box-shadow: var(--shadow);
+    }
+    .subject-item:hover {
+      border-color: var(--primary-orange);
+      transform: scale(1.04);
+      box-shadow: var(--shadow-hover);
+    }
+    .subject-item i { color: var(--primary-orange); margin-right: 8px; }
+
+    .online-classes-note {
+      background: linear-gradient(135deg, #fff8f0, #fff0e0);
+      border-left: 4px solid var(--primary-orange);
+      padding: 1.2rem 1.5rem;
+      border-radius: 12px;
+      margin: 2rem auto 0;
+      max-width: 900px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .online-classes-note i { color: var(--primary-orange); font-size: 1.5rem; margin-right: 10px; }
+    .online-classes-note strong { color: var(--primary-blue); }
+
+    /* ===== HOW IT WORKS ===== */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 300px)) !important;
+      justify-content: center !important;
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .step { text-align: center; }
+    .step .step-number {
+      width: 60px;
+      height: 60px;
+      background: var(--primary-blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 1rem;
+      box-shadow: 0 4px 15px rgba(0, 59, 111, 0.25);
+    }
+    .step h4 { color: var(--primary-blue); margin-bottom: 0.5rem; }
+    .step p { color: var(--text-gray); font-size: 0.9rem; }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 350px)) !important;
+      justify-content: center !important;
+      gap: 2rem !important;
+      max-width: 1200px !important;
+      margin: 0 auto !important;
+    }
+    .testimonial-card {
+      background: white;
+      padding: 1.8rem 1.5rem;
+      border-radius: 16px;
+      border: 1px solid #eef2f6;
+      box-shadow: var(--shadow);
+      transition: 0.2s;
+    }
+    .testimonial-card:hover { box-shadow: var(--shadow-hover); }
+    .testimonial-card .stars { color: var(--primary-orange); margin-bottom: 0.5rem; }
+    .testimonial-card p { color: var(--text-dark); line-height: 1.6; margin-bottom: 1rem; }
+    .testimonial-card .author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testimonial-card .author .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    .testimonial-card .author .name { font-weight: 600; color: var(--primary-blue); }
+    .testimonial-card .author .role { font-size: 0.8rem; color: var(--text-gray); }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--primary-blue);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 3rem 5% 2rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .footer h4 { color: white; margin-bottom: 1rem; }
+    .footer ul { list-style: none; }
+    .footer ul li { margin-bottom: 0.5rem; }
+    .footer ul a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: 0.15s;
+      cursor: pointer;
+    }
+    .footer ul a:hover { color: var(--primary-orange); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+    .footer-bottom span i { color: var(--primary-orange); }
+
+    /* ===== CONTACT MODAL ===== */
+    .contact-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+    .contact-modal.show { display: flex; }
+    .contact-modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .contact-modal-content .modal-icon { font-size: 4rem; color: #25D366; margin-bottom: 1rem; }
+    .contact-modal-content h2 { color: var(--primary-blue); margin-bottom: 0.5rem; }
+    .contact-modal-content p { color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.6; }
+    .contact-modal-content .contact-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .contact-modal-content .contact-buttons a {
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: 0.15s;
+    }
+    .contact-modal-content .contact-buttons a:hover { transform: scale(1.02); }
+    .btn-whatsapp { background: #25D366; color: white; }
+    .btn-whatsapp:hover {
+      background: #1da851;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    }
+    .btn-sms { background: #34B7F1; color: white; }
+    .btn-sms:hover {
+      background: #1a9bd6;
+      box-shadow: 0 4px 15px rgba(52, 183, 241, 0.4);
+    }
+    .btn-close-modal {
+      background: #eef3f8;
+      color: var(--text-dark);
+      border: 1px solid #d8e2ed;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.15s;
+      margin-top: 0.5rem;
+    }
+    .btn-close-modal:hover { background: #dce6f2; }
+
+    /* ===== PAYMENT MODAL ===== */
+    .payment-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+    .payment-modal.show { display: flex; }
+    .payment-modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 550px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
+    }
+    .payment-modal-content .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .payment-modal-content .modal-header h2 {
+      color: var(--primary-blue);
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .payment-modal-content .modal-header h2 i { color: #25D366; }
+    .payment-modal-content .close-modal {
+      background: #eef3f8;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.15s;
+      color: var(--text-dark);
+    }
+    .payment-modal-content .close-modal:hover { background: #dce6f2; }
+    .payment-info {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+    .payment-info .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #e8ecf0;
+    }
+    .payment-info .info-row:last-child { border-bottom: none; }
+    .payment-info .info-label {
+      font-weight: 600;
+      color: var(--text-gray);
+      font-size: 0.9rem;
+    }
+    .payment-info .info-value {
+      font-weight: 500;
+      color: var(--text-dark);
+      text-align: right;
+    }
+    .payment-info .info-value .highlight { color: var(--primary-orange); font-weight: 700; }
+    .payment-steps { margin: 1.5rem 0; }
+    .payment-steps h4 { color: var(--primary-blue); margin-bottom: 0.8rem; }
+    .payment-steps .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 0.5rem 0;
+    }
+    .payment-steps .step-item .step-num {
+      background: var(--primary-orange);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .payment-steps .step-item p { color: var(--text-gray); font-size: 0.9rem; line-height: 1.5; }
+    .payment-steps .step-item p strong { color: var(--text-dark); }
+    .payment-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .btn-remitly {
+      background: var(--remitly-blue);
+      color: white;
+      padding: 12px 28px;
+      border-radius: 40px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex: 1;
+      justify-content: center;
+    }
+    .btn-remitly:hover {
+      background: #005299;
+      transform: scale(1.02);
+      box-shadow: 0 4px 20px rgba(0, 102, 179, 0.3);
+    }
+    .btn-copy-details {
+      background: #eef3f8;
+      color: var(--text-dark);
+      border: 1px solid #d8e2ed;
+      padding: 12px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-copy-details:hover { background: #dce6f2; }
+    .copy-notification {
+      display: none;
+      background: #d4edda;
+      color: #155724;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      border: 1px solid #c3e6cb;
+    }
+    .copy-notification.show { display: block; }
+
+    /* ===== SIMPLIFIED ORDER FORM ===== */
+    .form-page {
+      display: none;
+      min-height: 100vh;
+      background: var(--bg-light);
+      padding: 2rem;
+    }
+    .form-page.active { display: block; }
+
+    .form-page .form-container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .form-page .form-container .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .form-page .form-container .form-header h2 {
+      font-size: 1.5rem;
+      color: var(--primary-blue);
+      font-weight: 700;
+    }
+
+    .form-page .form-container .form-header h2 i {
+      color: var(--primary-orange);
+      margin-right: 10px;
+    }
+
+    .form-page .form-container .form-header .back-btn {
+      background: #eef3f8;
+      border: 1px solid #d8e2ed;
+      padding: 0.6rem 1.5rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text-dark);
+      transition: 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-page .form-container .form-header .back-btn:hover { background: #dce6f2; }
+
+    .form-page .form-wrapper {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+    }
+
+    .form-page .contact-info-sidebar {
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
+      border-radius: 16px;
+      padding: 1.5rem;
+      color: white;
+    }
+
+    .form-page .contact-info-sidebar .info-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 0.8rem;
+    }
+
+    .form-page .contact-info-sidebar .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 1.2rem;
+    }
+
+    .form-page .contact-info-sidebar .info-item i {
+      color: var(--primary-orange);
+      font-size: 1.1rem;
+      margin-top: 2px;
+      width: 20px;
+    }
+
+    .form-page .contact-info-sidebar .info-item .info-label {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-page .contact-info-sidebar .info-item .info-value {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .form-page .contact-info-sidebar .why-choose {
+      margin-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 1.5rem;
+    }
+
+    .form-page .contact-info-sidebar .why-choose h4 {
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+      color: var(--primary-orange);
+    }
+
+    .form-page .contact-info-sidebar .why-choose ul {
+      list-style: none;
+    }
+
+    .form-page .contact-info-sidebar .why-choose ul li {
+      padding: 0.3rem 0;
+      font-size: 0.85rem;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-page .contact-info-sidebar .why-choose ul li i {
+      color: var(--primary-orange);
+      font-size: 0.8rem;
+    }
+
+    .form-page .contact-info-sidebar .whatsapp-btn {
+      display: block;
+      background: #25D366;
+      color: white;
+      text-align: center;
+      padding: 0.8rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      transition: 0.2s;
+    }
+
+    .form-page .contact-info-sidebar .whatsapp-btn:hover {
+      background: #1da851;
+      transform: scale(1.02);
+    }
+
+    /* ===== FORM FIELDS ===== */
+    .form-page .form-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .form-page .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-page .field-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-page .field-group label .required {
+      color: #e74c3c;
+    }
+
+    .form-page .field-group label i {
+      color: var(--primary-orange);
+    }
+
+    .form-page .field-group input,
+    .form-page .field-group textarea,
+    .form-page .field-group select {
+      padding: 10px 14px;
+      border: 2px solid #e8ecf0;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: white;
+      transition: 0.2s;
+      width: 100%;
+    }
+
+    .form-page .field-group input:focus,
+    .form-page .field-group textarea:focus,
+    .form-page .field-group select:focus {
+      outline: none;
+      border-color: var(--primary-orange);
+      box-shadow: 0 0 0 3px rgba(247, 148, 30, 0.15);
+    }
+
+    .form-page .field-group input::placeholder,
+    .form-page .field-group textarea::placeholder {
+      color: #b0c0d0;
+    }
+
+    .form-page .field-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* ===== PHONE INPUT WITH COUNTRY CODE ===== */
+    .phone-input-simple {
+      display: flex;
+      align-items: center;
+      border: 2px solid #e8ecf0;
+      border-radius: 12px;
+      background: white;
+      transition: 0.2s;
+      overflow: hidden;
+    }
+
+    .phone-input-simple:focus-within {
+      border-color: var(--primary-orange);
+      box-shadow: 0 0 0 3px rgba(247, 148, 30, 0.15);
+    }
+
+    .phone-input-simple .country-code {
+      background: #f8f9fa;
+      padding: 10px 8px;
+      font-weight: 600;
+      color: var(--text-dark);
+      border: none;
+      border-right: 1px solid #e8ecf0;
+      font-size: 0.95rem;
+      min-width: 70px;
+      cursor: pointer;
+      outline: none;
+      appearance: auto;
+      -webkit-appearance: auto;
+    }
+
+    .phone-input-simple .country-code:focus {
+      border-color: var(--primary-orange);
+    }
+
+    .phone-input-simple input {
+      border: none;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      background: transparent;
+      width: 100%;
+      outline: none;
+    }
+
+    .phone-input-simple input::placeholder {
+      color: #b0c0d0;
+    }
+
+    /* ===== FILE UPLOAD ===== */
+    .form-page .file-upload-wrapper {
+      border: 2px dashed #e8ecf0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+      position: relative;
+    }
+
+    .form-page .file-upload-wrapper:hover {
+      border-color: var(--primary-orange);
+      background: #fafcff;
+    }
+
+    .form-page .file-upload-wrapper i {
+      font-size: 2rem;
+      color: var(--primary-orange);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-page .file-upload-wrapper p {
+      color: var(--text-gray);
+      font-size: 0.9rem;
+    }
+
+    .form-page .file-upload-wrapper small {
+      color: #b0c0d0;
+      font-size: 0.8rem;
+    }
+
+    .form-page .file-upload-wrapper input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .form-page .file-list {
+      margin-top: 0.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .form-page .file-list .file-tag {
+      background: #eef3f8;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-dark);
+      border: 1px solid #d8e2ed;
+    }
+
+    .form-page .file-list .file-tag i {
+      color: var(--primary-orange);
+    }
+
+    .form-page .form-footer {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-page .btn-submit-form {
+      background: var(--primary-orange);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .form-page .btn-submit-form:hover {
+      background: var(--primary-orange-dark);
+      transform: scale(1.01);
+      box-shadow: 0 4px 20px rgba(247, 148, 30, 0.3);
+    }
+
+    .form-page .privacy-note {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+    }
+
+    .form-page .privacy-note i {
+      color: var(--success-green);
+    }
+
+    /* ===== CLIENT DASHBOARD ===== */
+    .client-dashboard {
+      display: none;
+      min-height: 100vh;
+      background: var(--bg-light);
+      padding: 2rem;
+    }
+    .client-dashboard.active { display: block; }
+
+    .client-dashboard .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .client-dashboard .dashboard-header {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .client-dashboard .dashboard-header h2 {
+      color: var(--primary-blue);
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .client-dashboard .dashboard-header h2 i {
+      color: var(--primary-orange);
+    }
+
+    .client-dashboard .dashboard-header .client-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .client-dashboard .dashboard-header .client-info span {
+      background: #f8f9fa;
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      border: 1px solid #e8ecf0;
+    }
+
+    .client-dashboard .dashboard-header .client-info strong {
+      color: var(--primary-blue);
+    }
+
+    .client-dashboard .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .client-dashboard .dashboard-card {
+      background: white;
+      border-radius: 24px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .client-dashboard .dashboard-card h3 {
+      color: var(--primary-blue);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #f0f4f8;
+      padding-bottom: 0.8rem;
+    }
+
+    .client-dashboard .dashboard-card h3 i {
+      color: var(--primary-orange);
+    }
+
+    .client-dashboard .dashboard-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* ===== ORDERS LIST ===== */
+    .orders-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .orders-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .orders-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .orders-list::-webkit-scrollbar-thumb {
+      background: var(--primary-orange);
+      border-radius: 10px;
+    }
+
+    .order-item {
+      border: 1px solid #e8ecf0;
+      border-radius: 12px;
+      padding: 1rem;
+      transition: 0.2s;
+      background: #fafcff;
+    }
+
+    .order-item:hover {
+      border-color: var(--primary-orange);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .order-item .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-item .order-header .order-id {
+      font-weight: 700;
+      color: var(--primary-blue);
+      font-size: 0.9rem;
+    }
+
+    .order-item .order-header .order-date {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
+
+    .order-item .order-subject {
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.3rem;
+      font-size: 0.95rem;
+    }
+
+    .order-item .order-details {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 0.3rem;
+    }
+
+    .order-item .order-attachments {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin: 0.3rem 0;
+    }
+
+    .order-item .order-attachments .attch-tag {
+      background: #eef3f8;
+      padding: 0.15rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      border: 1px solid #d8e2ed;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .order-item .order-attachments .attch-tag:hover {
+      background: var(--primary-orange);
+      color: white;
+      border-color: var(--primary-orange);
+    }
+
+    .order-item .order-attachments .attch-tag i {
+      color: var(--primary-orange);
+      font-size: 0.6rem;
+    }
+
+    .order-item .order-attachments .attch-tag:hover i {
+      color: white;
+    }
+
+    .order-item .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #eef3f8;
+    }
+
+    .order-item .order-footer .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .status-badge.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-badge.in-progress {
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .status-badge.completed {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .order-item .order-footer .order-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .order-item .order-footer .order-actions button {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      border: none;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .order-item .order-footer .order-actions .btn-view {
+      background: var(--primary-blue);
+      color: white;
+    }
+
+    .order-item .order-footer .order-actions .btn-view:hover {
+      background: var(--primary-blue-light);
+    }
+
+    .order-item .order-footer .order-actions .btn-complete {
+      background: var(--success-green);
+      color: white;
+    }
+
+    .order-item .order-footer .order-actions .btn-complete:hover {
+      background: #1e7e34;
+    }
+
+    /* ===== ORDER DETAILS VIEW ===== */
+    .order-detail-view {
+      display: none;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 1px solid #e8ecf0;
+    }
+
+    .order-detail-view.active {
+      display: block;
+    }
+
+    .order-detail-view .detail-row {
+      display: flex;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #eef3f8;
+    }
+
+    .order-detail-view .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .order-detail-view .detail-row .label {
+      font-weight: 600;
+      color: var(--text-gray);
+      width: 120px;
+      flex-shrink: 0;
+      font-size: 0.85rem;
+    }
+
+    .order-detail-view .detail-row .value {
+      color: var(--text-dark);
+      font-size: 0.9rem;
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .order-detail-view .detail-row .value .file-link {
+      color: var(--primary-orange);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .order-detail-view .detail-row .value .file-link:hover {
+      text-decoration: underline;
+    }
+
+    .order-detail-view .detail-row .value .attch-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    .order-detail-view .detail-row .value .attch-list .attch-item {
+      background: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      border: 1px solid #d8e2ed;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .order-detail-view .detail-row .value .attch-list .attch-item:hover {
+      background: var(--primary-orange);
+      color: white;
+      border-color: var(--primary-orange);
+    }
+
+    .order-detail-view .detail-row .value .attch-list .attch-item i {
+      color: var(--primary-orange);
+    }
+
+    .order-detail-view .detail-row .value .attch-list .attch-item:hover i {
+      color: white;
+    }
+
+    .order-detail-view .complete-upload-area {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 2px dashed var(--success-green);
+      border-radius: 12px;
+      text-align: center;
+      position: relative;
+      background: #f8fff8;
+    }
+
+    .order-detail-view .complete-upload-area input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .order-detail-view .complete-upload-area i {
+      font-size: 2rem;
+      color: var(--success-green);
+    }
+
+    .order-detail-view .complete-upload-area p {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+    }
+
+    .order-detail-view .btn-mark-complete {
+      background: var(--success-green);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .order-detail-view .btn-mark-complete:hover {
+      background: #1e7e34;
+      transform: scale(1.02);
+    }
+
+    .order-detail-view .btn-secondary-small {
+      background: #eef3f8;
+      color: var(--text-dark);
+      border: 1px solid #d8e2ed;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.15s;
+      margin-top: 0.3rem;
+    }
+
+    .order-detail-view .btn-secondary-small:hover {
+      background: #dce6f2;
+    }
+
+    /* ===== FILE VIEWER MODAL ===== */
+    .file-viewer-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+    }
+    .file-viewer-modal.show { display: flex; }
+
+    .file-viewer-content {
+      background: white;
+      border-radius: 24px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.3s ease;
+    }
+
+    .file-viewer-content .file-viewer-header {
+      padding: 1rem 1.5rem;
+      background: var(--primary-blue);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .file-viewer-content .file-viewer-header h3 {
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .file-viewer-content .file-viewer-header h3 i {
+      color: var(--primary-orange);
+    }
+
+    .file-viewer-content .file-viewer-header .btn-close-viewer {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .file-viewer-content .file-viewer-header .btn-close-viewer:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .file-viewer-content .file-viewer-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      max-height: calc(90vh - 80px);
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview {
+      text-align: center;
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview img {
+      max-width: 100%;
+      max-height: 500px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview .file-icon-large {
+      font-size: 8rem;
+      color: var(--primary-orange);
+      margin: 2rem 0;
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview .file-info {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 12px;
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview .file-info .file-name {
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 1.1rem;
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview .file-info .file-size {
+      color: var(--text-gray);
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview .file-info .file-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview .file-info .file-actions .btn-download {
+      background: var(--primary-orange);
+      color: white;
+      border: none;
+      padding: 0.6rem 2rem;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-viewer-content .file-viewer-body .file-preview .file-info .file-actions .btn-download:hover {
+      background: var(--primary-orange-dark);
+      transform: scale(1.02);
+    }
+
+    /* ===== CHAT ===== */
+    .chat-messages {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background: #fafcff;
+      border-radius: 12px;
+      border: 1px solid #eef3f8;
+    }
+
+    .chat-message {
+      padding: 0.5rem 0.8rem;
+      margin-bottom: 0.4rem;
+      border-radius: 10px;
+      max-width: 85%;
+      font-size: 0.9rem;
+    }
+
+    .chat-message.client {
+      background: #e8f0fe;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-message.admin {
+      background: #fff8f0;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+      border: 1px solid #f0e8d8;
+    }
+
+    .chat-message .msg-time {
+      font-size: 0.6rem;
+      color: var(--text-gray);
+      margin-top: 4px;
+      display: block;
+    }
+
+    .chat-message .msg-sender {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+      margin-bottom: 2px;
+    }
+
+    .chat-input-area {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input-area textarea {
+      flex: 1;
+      padding: 8px 12px;
+      border: 2px solid #e8ecf0;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      resize: vertical;
+      min-height: 40px;
+      max-height: 80px;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+
+    .chat-input-area textarea:focus {
+      outline: none;
+      border-color: var(--primary-orange);
+      box-shadow: 0 0 0 3px rgba(247, 148, 30, 0.15);
+    }
+
+    .chat-input-area .btn-send-chat {
+      background: var(--primary-orange);
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-end;
+    }
+
+    .chat-input-area .btn-send-chat:hover {
+      background: var(--primary-orange-dark);
+      transform: scale(1.02);
+    }
+
+    .chat-empty {
+      text-align: center;
+      color: var(--text-gray);
+      padding: 1rem 0;
+    }
+
+    .chat-empty i {
+      font-size: 1.5rem;
+      color: #d8e2ed;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+
+    /* ===== SUCCESS MODAL ===== */
+    .success-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+    .success-modal.show { display: flex; }
+
+    .success-modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
+    }
+
+    .success-modal-content .success-icon {
+      font-size: 4rem;
+      color: var(--success-green);
+      margin-bottom: 1rem;
+    }
+
+    .success-modal-content h2 {
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-modal-content p {
+      color: var(--text-gray);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .success-modal-content .btn-close-success {
+      background: var(--primary-orange);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-block;
+    }
+
+    .success-modal-content .btn-close-success:hover {
+      background: var(--primary-orange-dark);
+      transform: scale(1.02);
+    }
+
+    .success-modal-content .btn-view-dashboard {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    .success-modal-content .btn-view-dashboard:hover {
+      background: var(--primary-blue-light);
+      transform: scale(1.02);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 968px) {
+      .hero { flex-direction: column; text-align: center; padding: 2rem 5%; }
+      .hero-content .subtitle { margin: 1rem auto; }
+      .hero-buttons { justify-content: center; }
+      .trust-stats { justify-content: center; }
+      .subjects-tags { justify-content: center; }
+      .hero-image .image-placeholder { height: 220px; }
+      .form-page .form-wrapper { grid-template-columns: 1fr; }
+      .form-page .contact-info-sidebar { order: 2; }
+      .form-page .form-fields { order: 1; }
+      .status-indicator { display: none; }
+      .client-dashboard .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        padding: 1rem 0;
+        gap: 0.8rem;
+        background: var(--primary-blue);
+        border-radius: 12px;
+        margin-top: 0.5rem;
+      }
+      .nav-links.open { display: flex; }
+      .hamburger { display: block; }
+      .navbar { flex-wrap: wrap; }
+      .hero-content h1 { font-size: 2.2rem; }
+      .features-banner { flex-direction: column; align-items: center; }
+      .section-title { font-size: 1.8rem; }
+      .subjects-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+      .form-page .form-container { padding: 1.5rem; }
+      .navbar .logo .logo-text .main-name { font-size: 1rem; }
+      .navbar .logo .logo-text .tagline { display: none; }
+      .navbar .logo .logo-icon { width: 34px; height: 34px; font-size: 1rem; }
+      .status-indicator { display: none; }
+      .phone-input-simple { flex-wrap: wrap; }
+      .phone-input-simple .country-code {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e8ecf0;
+        min-width: 100%;
+      }
+      .client-dashboard .dashboard-header .client-info {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+      }
+      .order-item .order-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .order-detail-view .detail-row {
+        flex-direction: column;
+        padding: 0.3rem 0;
+      }
+      .order-detail-view .detail-row .label {
+        width: 100%;
+        font-size: 0.75rem;
+      }
+      .file-viewer-content .file-viewer-body .file-preview img {
+        max-height: 300px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-content h1 { font-size: 1.8rem; }
+      .btn-primary, .btn-secondary, .nav-payment, .nav-cta { width: 100%; justify-content: center; }
+      .trust-stats { flex-direction: column; align-items: center; }
+      .online-classes-note { padding: 1rem; font-size: 0.9rem; }
+      .success-modal-content { padding: 1.5rem; }
+      .form-page .form-container { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== LANDING PAGE ===== -->
+<div class="landing-page" id="landingPage">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <a href="#" class="logo" id="logoHomeBtn">
+      <div class="logo-icon">
+        <i class="fas fa-pen-nib"></i>
+      </div>
+      <div class="logo-text">
+        <span class="main-name">First Class <span>Writers</span> Hub</span>
+        <span class="tagline">✧ EXCELLENCE IN ACADEMIC WRITING ✧</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#subjects">Subjects</a></li>
+      <li><a href="#howitworks">How It Works</a></li>
+      <li><a href="#" id="navPaymentBtn"><i class="fas fa-credit-card"></i> Payment</a></li>
+      <li><a href="#" id="navContactSupport"><i class="fas fa-headset"></i> Support</a></li>
+    </ul>
+
+    <div class="nav-right-bar">
+      <div class="status-indicator" id="statusIndicator">
+        <span class="status-dot online" id="statusDot"></span>
+        <span class="status-text" id="statusText">Online</span>
+      </div>
+
+      <div id="navUserArea">
+        <a href="#" onclick="openAuthModal('login'); return false;" class="nav-auth-btn"><i class="fas fa-user-circle"></i> Login / Register</a>
+      </div>
+
+      <a href="#" class="nav-cta" id="orderNowBtn"><i class="fas fa-rocket"></i> Order Now →</a>
+
+      <div class="hamburger" id="hamburger">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="trust-badge">
+        <i class="fas fa-star" style="color: var(--primary-orange);"></i> Trusted by 5,000+ Students · UK, USA, AU, CA
+      </div>
+      <h1>Professional Help With Your <span>Academic Assignments</span></h1>
+      <p class="subtitle">
+        Expert academic writing across all non-technical disciplines. Score <strong>85+ marks</strong> with guaranteed confidentiality, on-time delivery, and 24/7 support.
+      </p>
+      <div class="hero-buttons">
+        <button class="btn-primary" id="heroOrderBtn">
+          <i class="fas fa-rocket"></i> Order Now →
+        </button>
+        <button class="btn-secondary" id="heroPaymentBtn">
+          <i class="fas fa-credit-card"></i> Make Payment
+        </button>
+        <button class="btn-secondary" id="heroQuoteBtn">
+          <i class="fas fa-file-invoice"></i> Get Free Quote
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Column Showcase Card -->
+    <div class="hero-image">
+      <div class="hero-showcase-card">
+        <div class="showcase-header">
+          <div class="showcase-icon"><i class="fas fa-graduation-cap"></i></div>
+          <div>
+            <h3>Academic Excellence</h3>
+            <p>Guaranteed top marks & professional support</p>
+          </div>
+        </div>
+        <div class="showcase-stats-grid">
+          <div class="showcase-stat">
+            <span class="stat-number">5,000+</span>
+            <span class="stat-label">Orders Completed</span>
+          </div>
+          <div class="showcase-stat">
+            <span class="stat-number">99.8%</span>
+            <span class="stat-label">On-Time Delivery</span>
+          </div>
+          <div class="showcase-stat">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Plagiarism-Free</span>
+          </div>
+          <div class="showcase-stat">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Direct Writer Chat</span>
+          </div>
+        </div>
+        <button onclick="showFormPage()" class="btn-showcase-cta">
+          <i class="fas fa-pencil-alt"></i> Submit Assignment Details
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES BANNER ===== -->
+  <div class="features-banner">
+    <div class="feature-item"><i class="fas fa-check-circle"></i> <span>100% Plagiarism-Free</span></div>
+    <div class="feature-item"><i class="fas fa-clock"></i> <span>On-Time Delivery</span></div>
+    <div class="feature-item"><i class="fas fa-sync-alt"></i> <span>Free Revisions</span></div>
+    <div class="feature-item"><i class="fas fa-lock"></i> <span>Confidential</span></div>
+  </div>
+
+  <!-- ===== SERVICES ===== -->
+  <section class="section bg-white" id="services">
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-subtitle">Professional academic writing services tailored to your needs</p>
+    <div class="services-grid">
+      <div class="service-card"><div class="icon"><i class="fas fa-pen-fancy"></i></div><h4>Essay Writing</h4><p>High-quality essays on any topic with proper research and citations.</p></div>
+      <div class="service-card"><div class="icon"><i class="fas fa-book-open"></i></div><h4>Dissertations & Theses</h4><p>Comprehensive dissertation writing from proposal to final submission.</p></div>
+      <div class="service-card"><div class="icon"><i class="fas fa-file-alt"></i></div><h4>Research Papers</h4><p>In-depth research papers with proper methodology and analysis.</p></div>
+      <div class="service-card"><div class="icon"><i class="fas fa-edit"></i></div><h4>Editing & Proofreading</h4><p>Professional editing to polish your work to perfection.</p></div>
+      <div class="service-card"><div class="icon"><i class="fas fa-chart-line"></i></div><h4>Case Studies</h4><p>Detailed case study analysis with practical recommendations.</p></div>
+      <div class="service-card"><div class="icon"><i class="fas fa-tasks"></i></div><h4>Assignments & Reports</h4><p>Well-structured assignments and reports for all subjects.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== SUBJECTS WE COVER ===== -->
+  <section class="section bg-light" id="subjects">
+    <h2 class="section-title">Subjects We Cover</h2>
+    <p class="section-subtitle">Expert help across all non-technical disciplines</p>
+    <div class="subjects-grid">
+      <div class="subject-item"><i class="fas fa-user-md"></i> Nursing</div>
+      <div class="subject-item"><i class="fas fa-language"></i> English</div>
+      <div class="subject-item"><i class="fas fa-book"></i> Humanities</div>
+      <div class="subject-item"><i class="fas fa-users"></i> Sociology</div>
+      <div class="subject-item"><i class="fas fa-briefcase"></i> Business</div>
+      <div class="subject-item"><i class="fas fa-gavel"></i> Law</div>
+      <div class="subject-item"><i class="fas fa-chalkboard"></i> Education</div>
+      <div class="subject-item"><i class="fas fa-globe"></i> International Studies</div>
+      <div class="subject-item"><i class="fas fa-landmark"></i> History</div>
+      <div class="subject-item"><i class="fas fa-heart"></i> Psychology</div>
+      <div class="subject-item"><i class="fas fa-palette"></i> Arts</div>
+      <div class="subject-item"><i class="fas fa-newspaper"></i> Journalism</div>
+      <div class="subject-item"><i class="fas fa-hand-holding-heart"></i> Social Work</div>
+      <div class="subject-item"><i class="fas fa-university"></i> Political Science</div>
+      <div class="subject-item"><i class="fas fa-flag"></i> Cultural Studies</div>
+      <div class="subject-item"><i class="fas fa-presentation"></i> Powerpoints</div>
+      <div class="subject-item"><i class="fas fa-theater-masks"></i> Drama</div>
+      <div class="subject-item"><i class="fas fa-camera"></i> Media Studies</div>
+      <div class="subject-item"><i class="fas fa-female"></i> Gender Studies</div>
+      <div class="subject-item"><i class="fas fa-tree"></i> Environmental Studies</div>
+      <div class="subject-item"><i class="fas fa-city"></i> Urban Planning</div>
+    </div>
+    <div class="online-classes-note">
+      <i class="fas fa-laptop"></i>
+      <strong>📚 We Also Manage Online Classes!</strong> 
+      Need help with your entire online course? We can handle your weekly discussions, quizzes, assignments, and exams. 
+      <strong>Just say "Take my online class" and we'll take it from there!</strong>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="section bg-white" id="howitworks">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-subtitle">Get your assignment done in 3 simple steps</p>
+    <div class="steps-grid">
+      <div class="step"><div class="step-number">1</div><h4>Post Your Assignment</h4><p>Fill in your assignment details, requirements, and deadline.</p></div>
+      <div class="step"><div class="step-number">2</div><h4>Get Matched</h4><p>Expert helpers review and claim your assignment.</p></div>
+      <div class="step"><div class="step-number">3</div><h4>Receive Your Work</h4><p>Get your completed assignment before the deadline.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="section bg-light" id="testimonials">
+    <h2 class="section-title">What Our Students Say</h2>
+    <p class="section-subtitle">Real reviews from real students who achieved their academic goals</p>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p>"Absolutely amazing service! My dissertation scored 78%. The writer was professional and delivered on time."</p>
+        <div class="author"><div class="avatar">SK</div><div><div class="name">Sarah K.</div><div class="role">PhD Student, UK</div></div></div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p>"I was struggling with my research paper until I found First Class Writers Hub. Got 82% and the feedback was excellent!"</p>
+        <div class="author"><div class="avatar">JM</div><div><div class="name">James M.</div><div class="role">Master's, Australia</div></div></div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p>"Fast, reliable, and high-quality work. They helped me improve my grades significantly. Highly recommended!"</p>
+        <div class="author"><div class="avatar">AL</div><div><div class="name">Amanda L.</div><div class="role">Bachelor's, Canada</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT / CONTACT ===== -->
+  <section class="section bg-white" id="about">
+    <h2 class="section-title">About Us</h2>
+    <p class="section-subtitle" style="max-width: 700px; margin: 0 auto 2rem;">
+      First Class Writers Hub is a leading academic writing platform dedicated to helping students achieve academic excellence.
+      With a team of expert writers across all non-technical disciplines, we deliver high-quality, plagiarism-free work on time.
+      From Humanities to Business, Law to Social Sciences, we've got you covered.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <button class="btn-primary" id="aboutOrderBtn"><i class="fas fa-rocket"></i> Order Now →</button>
+      <button class="btn-secondary" id="aboutPaymentBtn" style="background: #25D366; color: white; border-color: #25D366;"><i class="fas fa-money-bill-wave"></i> Make Payment</button>
+      <button class="btn-secondary" id="aboutContactBtn" style="background: var(--primary-blue); color: white; border-color: var(--primary-blue);"><i class="fas fa-headset"></i> Contact Support</button>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <h4><i class="fas fa-pen-nib" style="color: var(--primary-orange);"></i> First Class Writers Hub</h4>
+        <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; max-width: 250px; line-height: 1.6;">
+          Your trusted partner for academic success across all non-technical subjects. We help students achieve their goals with professional writing services.
+        </p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#subjects">Subjects</a></li>
+          <li><a href="#howitworks">How It Works</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#about">About Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Essay Writing</a></li>
+          <li><a href="#">Dissertations</a></li>
+          <li><a href="#">Research Papers</a></li>
+          <li><a href="#">Editing & Proofreading</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#" id="footerSupportBtn"><i class="fas fa-headset" style="color: var(--primary-orange);"></i> Support</a></li>
+          <li><a href="mailto:firstclasswritersk@gmail.com"><i class="fas fa-envelope" style="color: var(--primary-orange);"></i> firstclasswritersk@gmail.com</a></li>
+          <li><a href="#"><i class="fas fa-phone" style="color: var(--primary-orange);"></i> +254 746 357 646</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 First Class Writers Hub. All rights reserved.</span>
+      <span>📍 UK · Australia · Canada · USA</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ===== SIMPLIFIED ORDER FORM PAGE ===== -->
+<div class="form-page" id="formPage">
+  <div class="form-container">
+    <div class="form-header">
+      <h2><i class="fas fa-pencil-alt"></i> Tell Us About Your Assignment</h2>
+      <button class="back-btn" id="backToHomeBtn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+    </div>
+
+    <div class="form-wrapper">
+      <!-- Contact Info Sidebar -->
+      <div class="contact-info-sidebar">
+        <div class="info-title"><i class="fas fa-address-card" style="color: var(--primary-orange);"></i> Contact Information</div>
+        
+        <div class="info-item">
+          <i class="fas fa-phone"></i>
+          <div>
+            <div class="info-label">PHONE / WHATSAPP</div>
+            <div class="info-value">+254 746 357 646</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="fas fa-envelope"></i>
+          <div>
+            <div class="info-label">EMAIL</div>
+            <div class="info-value">firstclasswritersk@gmail.com</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="fas fa-user-tie"></i>
+          <div>
+            <div class="info-label">MANAGER</div>
+            <div class="info-value">Antony Makumi</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="fas fa-clock"></i>
+          <div>
+            <div class="info-label">SUPPORT HOURS</div>
+            <div class="info-value">24/7 Available</div>
+          </div>
+        </div>
+
+        <div class="why-choose">
+          <h4><i class="fas fa-star"></i> Why Students Choose Us</h4>
+          <ul>
+            <li><i class="fas fa-check-circle"></i> AI-Free, Human-Written Work</li>
+            <li><i class="fas fa-check-circle"></i> On-Time Delivery Guaranteed</li>
+            <li><i class="fas fa-check-circle"></i> 100% Confidential</li>
+            <li><i class="fas fa-check-circle"></i> Free Revisions Included</li>
+            <li><i class="fas fa-check-circle"></i> Plagiarism-Free Certificate</li>
+          </ul>
+        </div>
+
+        <a href="https://wa.me/254746357646?text=Hello%20First%20Class%20Writers%20Hub%2C%20I%20need%20help%20with%20my%20assignment" target="_blank" class="whatsapp-btn">
+          <i class="fab fa-whatsapp"></i> Chat on WhatsApp Now
+        </a>
+      </div>
+
+      <!-- Form Fields -->
+      <form id="assignmentForm" class="form-fields">
+        <div class="field-group">
+          <label><i class="fas fa-user"></i> FULL NAME <span class="required">*</span></label>
+          <input type="text" id="clientName" placeholder="Your full name" required>
+        </div>
+
+        <div class="field-group">
+          <label><i class="fas fa-envelope"></i> EMAIL ADDRESS <span class="required">*</span></label>
+          <input type="email" id="email" placeholder="your@email.com" required>
+        </div>
+
+        <div class="field-group">
+          <label><i class="fas fa-phone"></i> PHONE / WHATSAPP <span style="font-size:0.8rem; color:#64748b; font-weight:normal;">(Optional)</span></label>
+          <div class="phone-input-simple">
+            <select class="country-code" id="countryCode">
+              <option value="+1" selected>🇺🇸 +1 (US)</option>
+              <option value="+44">🇬🇧 +44</option>
+              <option value="+61">🇦🇺 +61</option>
+              <option value="+1">🇨🇦 +1</option>
+              <option value="+254">🇰🇪 +254</option>
+              <option value="+27">🇿🇦 +27</option>
+              <option value="+91">🇮🇳 +91</option>
+              <option value="+86">🇨🇳 +86</option>
+              <option value="+81">🇯🇵 +81</option>
+              <option value="+49">🇩🇪 +49</option>
+              <option value="+33">🇫🇷 +33</option>
+              <option value="+39">🇮🇹 +39</option>
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+55">🇧🇷 +55</option>
+              <option value="+52">🇲🇽 +52</option>
+              <option value="+234">🇳🇬 +234</option>
+              <option value="+92">🇵🇰 +92</option>
+              <option value="+880">🇧🇩 +880</option>
+              <option value="+62">🇮🇩 +62</option>
+              <option value="+63">🇵🇭 +63</option>
+              <option value="+64">🇳🇿 +64</option>
+              <option value="+31">🇳🇱 +31</option>
+              <option value="+46">🇸🇪 +46</option>
+              <option value="+47">🇳🇴 +47</option>
+              <option value="+45">🇩🇰 +45</option>
+              <option value="+358">🇫🇮 +358</option>
+              <option value="+30">🇬🇷 +30</option>
+              <option value="+351">🇵🇹 +351</option>
+              <option value="+41">🇨🇭 +41</option>
+              <option value="+43">🇦🇹 +43</option>
+              <option value="+32">🇧🇪 +32</option>
+              <option value="+60">🇲🇾 +60</option>
+              <option value="+65">🇸🇬 +65</option>
+              <option value="+971">🇦🇪 +971</option>
+              <option value="+966">🇸🇦 +966</option>
+              <option value="+972">🇮🇱 +972</option>
+              <option value="+82">🇰🇷 +82</option>
+              <option value="+7">🇷🇺 +7</option>
+              <option value="+54">🇦🇷 +54</option>
+              <option value="+56">🇨🇱 +56</option>
+              <option value="+57">🇨🇴 +57</option>
+              <option value="+51">🇵🇪 +51</option>
+              <option value="+20">🇪🇬 +20</option>
+              <option value="+212">🇲🇦 +212</option>
+              <option value="+216">🇹🇳 +216</option>
+              <option value="+90">🇹🇷 +90</option>
+              <option value="+48">🇵🇱 +48</option>
+              <option value="+420">🇨🇿 +420</option>
+              <option value="+36">🇭🇺 +36</option>
+              <option value="+40">🇷🇴 +40</option>
+              <option value="+359">🇧🇬 +359</option>
+              <option value="+385">🇭🇷 +385</option>
+            </select>
+            <input type="tel" id="phone" placeholder="Your phone number (optional)">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label><i class="fas fa-book"></i> SUBJECT / TOPIC <span class="required">*</span></label>
+          <input type="text" id="subject" placeholder="e.g. Marketing Strategy Essay" required>
+        </div>
+
+        <div class="field-group">
+          <label><i class="fas fa-align-left"></i> MESSAGE / REQUIREMENTS <span class="required">*</span></label>
+          <textarea id="instructions" placeholder="Describe your assignment requirements, word count, referencing style, etc." required></textarea>
+        </div>
+
+        <div class="field-group">
+          <label><i class="fas fa-paperclip"></i> ATTACH ASSIGNMENT FILE (OPTIONAL)</label>
+          <div class="file-upload-wrapper" id="fileUploadWrapper">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Click to upload — PDF, Word, Excel, TXT, ZIP or image (max 4 MB)</p>
+            <small>Drag and drop or click to browse</small>
+            <input type="file" id="attachments" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.png,.jpg,.jpeg" onchange="handleFileSelect(this)">
+          </div>
+          <div class="file-list" id="fileList"></div>
+        </div>
+
+        <div class="form-footer">
+          <button type="submit" class="btn-submit-form">
+            <i class="fas fa-paper-plane"></i> Submit Inquiry →
+          </button>
+          <div class="privacy-note">
+            <i class="fas fa-lock"></i> Your information is completely confidential. We respond within 15 minutes.
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT DASHBOARD ===== -->
+<div class="client-dashboard" id="clientDashboard">
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h2><i class="fas fa-file-alt"></i> My Dashboard</h2>
+      <div class="client-info">
+        <span><i class="fas fa-user"></i> <strong id="displayClientName">---</strong></span>
+        <span><i class="fas fa-envelope"></i> <strong id="displayClientEmail">---</strong></span>
+        <button class="btn-secondary" id="newOrderFromDashboard" style="background: var(--primary-orange); color: white; border: none; padding: 0.4rem 1.5rem; border-radius: 30px; font-weight: 600; cursor: pointer;">
+          <i class="fas fa-plus"></i> New Order
+        </button>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Orders List -->
+      <div class="dashboard-card full-width">
+        <h3><i class="fas fa-list"></i> My Orders</h3>
+        <div class="orders-list" id="ordersList">
+          <p style="text-align: center; color: var(--text-gray); padding: 1rem 0;">No orders found. Place your first order now!</p>
+        </div>
+      </div>
+
+      <!-- Chat -->
+      <div class="dashboard-card full-width">
+        <h3 id="clientChatHeaderTitle" style="display: flex; align-items: center; justify-content: space-between;"><i class="fas fa-comments"></i> Chat with Admin</h3>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-empty">
+            <i class="fas fa-comment-dots"></i>
+            <p>No messages yet. Start the conversation!</p>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <textarea id="chatInput" placeholder="Type your message here..." rows="1"></textarea>
+          <button class="btn-send-chat" id="sendChatBtn">
+            <i class="fas fa-paper-plane"></i> Send
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SUCCESS MODAL ===== -->
+<div class="success-modal" id="successModal">
+  <div class="success-modal-content">
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <h2>Inquiry Submitted Successfully! 🎉</h2>
+    <p>
+      Thank you for reaching out to First Class Writers Hub. 
+      Our team will review your requirements and get back to you within 15 minutes.
+      <br><br>
+      <strong>📱 +254 746 357 646</strong> (Available 24/7)
+    </p>
+    <button class="btn-view-dashboard" id="viewDashboardBtn">
+      <i class="fas fa-eye"></i> View My Dashboard
+    </button>
+    <button class="btn-close-success" id="closeSuccessBtn">
+      <i class="fas fa-times"></i> Close
+    </button>
+  </div>
+</div>
+
+<!-- ===== PAYMENT MODAL ===== -->
+<div class="payment-modal" id="paymentModal">
+  <div class="payment-modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-money-bill-wave"></i> Make Payment</h2>
+      <button class="close-modal" id="closePaymentModalBtn">&times;</button>
+    </div>
+    <p style="color: var(--text-gray); margin-bottom: 1rem;">Pay securely through <strong>Remitly</strong> to send money directly to our M-Pesa account.</p>
+    <div class="payment-info">
+      <div class="info-row"><span class="info-label"><i class="fas fa-flag"></i> Country</span><span class="info-value"><strong>Kenya</strong></span></div>
+      <div class="info-row"><span class="info-label"><i class="fas fa-mobile-alt"></i> Delivery Method</span><span class="info-value"><strong>Mobile Money</strong></span></div>
+      <div class="info-row"><span class="info-label"><i class="fas fa-wallet"></i> Mobile Wallet</span><span class="info-value"><strong>M-Pesa</strong></span></div>
+      <div class="info-row"><span class="info-label"><i class="fas fa-user"></i> Recipient Name</span><span class="info-value"><strong class="highlight">Antony Makumi</strong></span></div>
+      <div class="info-row"><span class="info-label"><i class="fas fa-phone"></i> Phone Number</span><span class="info-value"><strong class="highlight">0746357646</strong></span></div>
+    </div>
+    <div class="payment-steps">
+      <h4><i class="fas fa-list-ol"></i> How to send payment:</h4>
+      <div class="step-item"><span class="step-num">1</span><p>Go to <strong>Remitly</strong> and select <strong>Kenya</strong> as your destination country.</p></div>
+      <div class="step-item"><span class="step-num">2</span><p>Choose <strong>M-Pesa</strong> as the delivery method.</p></div>
+      <div class="step-item"><span class="step-num">3</span><p>Enter recipient details: <strong>Antony Makumi</strong> (Phone: <strong>0746357646</strong>)</p></div>
+      <div class="step-item"><span class="step-num">4</span><p>Enter the amount and complete your payment securely.</p></div>
+    </div>
+    <div class="copy-notification" id="copyNotification"><i class="fas fa-check-circle"></i> Payment details copied to clipboard!</div>
+    <div class="payment-actions">
+      <a href="https://www.remitly.com/us/en/providers-kenya/send-money-to-m-pesa" target="_blank" class="btn-remitly"><i class="fas fa-external-link-alt"></i> Pay with Remitly</a>
+      <button class="btn-copy-details" id="copyDetailsBtn"><i class="fas fa-copy"></i> Copy Details</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FILE VIEWER MODAL ===== -->
+<div class="file-viewer-modal" id="fileViewerModal">
+  <div class="file-viewer-content">
+    <div class="file-viewer-header">
+      <h3><i class="fas fa-file"></i> <span id="viewerFileName">File</span></h3>
+      <button class="btn-close-viewer" id="closeFileViewerBtn">&times;</button>
+    </div>
+    <div class="file-viewer-body" id="fileViewerBody">
+      <!-- Content populated by JavaScript -->
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTACT SUPPORT MODAL ===== -->
+<div class="contact-modal" id="contactModal">
+  <div class="contact-modal-content">
+    <div class="modal-icon"><i class="fas fa-headset"></i></div>
+    <h2>Contact Support</h2>
+    <p>Choose your preferred way to reach us. We're here to help you with any questions or issues!</p>
+    <div class="contact-buttons">
+      <a href="https://wa.me/254746357646?text=Thank%20you%20for%20contacting%20First%20Class%20Writers%20Hub%20admin.%20How%20may%20I%20help%20you%3F" target="_blank" class="btn-whatsapp"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+      <a href="sms:+254746357646?body=Thank%20you%20for%20contacting%20First%20Class%20Writers%20Hub%20admin.%20How%20may%20I%20help%20you%3F" class="btn-sms"><i class="fas fa-sms"></i> Send SMS</a>
+      <button class="btn-close-modal" id="closeModalBtn"><i class="fas fa-times"></i> Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AUTHENTICATION MODAL ===== -->
+<div class="auth-modal" id="authModal">
+  <div class="auth-modal-content">
+    <div class="auth-modal-header">
+      <h3 id="authModalTitle"><i class="fas fa-user-circle" style="color: var(--primary-orange);"></i> Client Portal</h3>
+      <button class="close-auth-modal" onclick="closeAuthModal()">&times;</button>
+    </div>
+    
+    <div class="auth-tabs" id="authTabButtons">
+      <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab-btn" id="tabRegBtn" onclick="switchAuthTab('register')">Create Account</button>
+      <button class="auth-tab-btn" id="tabForgotBtn" onclick="switchAuthTab('forgot')" style="display:none;">Reset Password</button>
+    </div>
+
+    <div id="authAlert" class="alert alert-danger" style="display: none;"></div>
+
+    <!-- Login Form -->
+    <form id="loginForm">
+      <div class="auth-form-group">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com" required>
+      </div>
+      <div class="auth-form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+          <label style="margin-bottom:0;">Password</label>
+          <a href="javascript:void(0)" onclick="switchAuthTab('forgot')" style="font-size: 0.8rem; color: var(--primary-blue, #003b6f); font-weight: 600; text-decoration: underline;">Forgot Password?</a>
+        </div>
+        <input type="password" id="loginPassword" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-auth-submit"><i class="fas fa-sign-in-alt"></i> Log In</button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" style="display: none;">
+      <div class="auth-form-group">
+        <label>Full Name</label>
+        <input type="text" id="regName" placeholder="Your full name" required>
+      </div>
+      <div class="auth-form-group">
+        <label>Email Address</label>
+        <input type="email" id="regEmail" placeholder="your@email.com" required>
+      </div>
+      <div class="auth-form-group">
+        <label>Phone Number (Optional)</label>
+        <input type="tel" id="regPhone" placeholder="+254 700 000000">
+      </div>
+      <div class="auth-form-group">
+        <label>Create Password</label>
+        <input type="password" id="regPassword" placeholder="At least 6 characters" required minlength="6">
+      </div>
+      <button type="submit" class="btn-auth-submit"><i class="fas fa-user-plus"></i> Create Account</button>
+    </form>
+
+    <!-- Forgot Password Step 1: Request Code Form -->
+    <form id="forgotForm" style="display: none;">
+      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Enter your registered email address to receive a 6-digit Password Reset Code.</p>
+      <div class="auth-form-group">
+        <label>Email Address</label>
+        <input type="email" id="forgotEmail" placeholder="your@email.com" required>
+      </div>
+      <button type="submit" class="btn-auth-submit"><i class="fas fa-paper-plane"></i> Send Reset Code</button>
+      <div style="text-align: center; margin-top: 1rem;">
+        <a href="javascript:void(0)" onclick="switchAuthTab('login')" style="font-size: 0.85rem; color: #64748b; text-decoration: underline;">Back to Sign In</a>
+      </div>
+    </form>
+
+    <!-- Forgot Password Step 2: Reset Password Form -->
+    <form id="resetForm" style="display: none;">
+      <p style="font-size: 0.85rem; color: #059669; margin-bottom: 1rem;"><i class="fas fa-check-circle"></i> Enter the 6-digit code sent to your email and your new password.</p>
+      <div class="auth-form-group">
+        <label>Email Address</label>
+        <input type="email" id="resetEmail" required readonly style="background: #f8fafc;">
+      </div>
+      <div class="auth-form-group">
+        <label>6-Digit Reset Code</label>
+        <input type="text" id="resetCode" placeholder="e.g. 123456" required maxlength="6">
+      </div>
+      <div class="auth-form-group">
+        <label>New Password</label>
+        <input type="password" id="resetNewPass" placeholder="At least 6 characters" required minlength="6">
+      </div>
+      <button type="submit" class="btn-auth-submit"><i class="fas fa-key"></i> Set New Password</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== CLIENT CHANGE PASSWORD MODAL ===== -->
+<div class="auth-modal" id="clientPassModal">
+  <div class="auth-modal-content">
+    <div class="auth-modal-header">
+      <h3><i class="fas fa-key" style="color: var(--primary-orange);"></i> Change Password</h3>
+      <button class="close-auth-modal" onclick="closeClientPassModal()">&times;</button>
+    </div>
+    <div id="clientPassAlert"></div>
+    <form id="clientPassForm">
+      <div class="auth-form-group">
+        <label>Current Password</label>
+        <input type="password" id="clientCurrentPass" required placeholder="Enter current password">
+      </div>
+      <div class="auth-form-group">
+        <label>New Password</label>
+        <input type="password" id="clientNewPass" required minlength="6" placeholder="Enter new password (min 6 chars)">
+      </div>
+      <div class="auth-form-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="clientConfirmPass" required minlength="6" placeholder="Re-enter new password">
+      </div>
+      <button type="submit" class="btn-auth-submit"><i class="fas fa-save"></i> Update Password</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ===== FILE UPLOAD HANDLING =====
+  function handleFileSelect(input) {
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = '';
+    
+    if (input.files && input.files.length > 0) {
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        const tag = document.createElement('span');
+        tag.className = 'file-tag';
+        tag.innerHTML = `<i class="fas fa-file"></i> ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        fileList.appendChild(tag);
+      }
+    }
+  }
+
+  // ===== ONLINE STATUS =====
+  function updateOnlineStatus() {
+    const dot = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+    
+    if (navigator.onLine) {
+      dot.className = 'status-dot online';
+      text.textContent = 'Online';
+    } else {
+      dot.className = 'status-dot offline';
+      text.textContent = 'Offline';
+    }
+  }
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
+
+  // ===== ASSIGNMENT COUNTER =====
+  function getNextAssignmentId() {
+    let counter = parseInt(localStorage.getItem('assignmentCounter')) || 2000;
+    counter += 1;
+    localStorage.setItem('assignmentCounter', counter.toString());
+    return counter;
+  }
+
+  // ===== FILE STORAGE =====
+  function storeFile(file, orderId, fileIndex) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const fileData = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          data: e.target.result,
+          orderId: orderId,
+          fileIndex: fileIndex
+        };
+        // Store in localStorage with a unique key
+        const key = `file_${orderId}_${fileIndex}`;
+        try {
+          localStorage.setItem(key, JSON.stringify(fileData));
+          resolve(key);
+        } catch (error) {
+          // If file is too large for localStorage
+          reject(error);
+        }
+      };
+      reader.onerror = function(error) {
+        reject(error);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function getStoredFile(orderId, fileIndex) {
+    const key = `file_${orderId}_${fileIndex}`;
+    const data = localStorage.getItem(key);
+    if (data) {
+      return JSON.parse(data);
+    }
+    return null;
+  }
+
+  function deleteStoredFile(orderId, fileIndex) {
+    const key = `file_${orderId}_${fileIndex}`;
+    localStorage.removeItem(key);
+  }
+
+  // ===== FILE VIEWER =====
+  function openFileViewer(fileData) {
+    const modal = document.getElementById('fileViewerModal');
+    const body = document.getElementById('fileViewerBody');
+    const fileName = document.getElementById('viewerFileName');
+    
+    fileName.textContent = fileData.name;
+    
+    const fileType = fileData.type || '';
+    const isImage = fileType.startsWith('image/');
+    const isPDF = fileType === 'application/pdf';
+    const isText = fileType.startsWith('text/');
+    
+    let html = `
+      <div class="file-preview">
+    `;
+    
+    if (isImage) {
+      html += `<img src="${fileData.data}" alt="${fileData.name}">`;
+    } else if (isPDF) {
+      html += `
+        <div class="file-icon-large"><i class="fas fa-file-pdf"></i></div>
+        <p style="color: var(--text-gray); margin-bottom: 1rem;">PDF files can be downloaded and viewed with a PDF viewer.</p>
+      `;
+    } else if (isText) {
+      try {
+        const textContent = atob(fileData.data.split(',')[1]);
+        html += `
+          <div style="background: #f8f9fa; padding: 1rem; border-radius: 12px; text-align: left; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; word-break: break-word;">
+            ${textContent}
+          </div>
+        `;
+      } catch (e) {
+        html += `
+          <div class="file-icon-large"><i class="fas fa-file-alt"></i></div>
+          <p style="color: var(--text-gray);">Text file content could not be displayed.</p>
+        `;
+      }
+    } else {
+      // Other file types - show icon
+      let icon = 'fa-file';
+      if (fileType.includes('word') || fileType.includes('doc')) icon = 'fa-file-word';
+      else if (fileType.includes('excel') || fileType.includes('sheet')) icon = 'fa-file-excel';
+      else if (fileType.includes('zip') || fileType.includes('archive')) icon = 'fa-file-archive';
+      else if (fileType.includes('video')) icon = 'fa-file-video';
+      else if (fileType.includes('audio')) icon = 'fa-file-audio';
+      
+      html += `
+        <div class="file-icon-large"><i class="fas ${icon}"></i></div>
+        <p style="color: var(--text-gray);">Preview not available for this file type.</p>
+      `;
+    }
+    
+    // File info and download button
+    html += `
+        <div class="file-info">
+          <div class="file-name">${fileData.name}</div>
+          <div class="file-size">Size: ${(fileData.size / 1024).toFixed(1)} KB</div>
+          <div class="file-actions">
+            <button class="btn-download" onclick="downloadFile('${fileData.name}', '${fileData.data}')">
+              <i class="fas fa-download"></i> Download
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    body.innerHTML = html;
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function downloadFile(fileName, dataUrl) {
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // Close file viewer
+  document.getElementById('closeFileViewerBtn').addEventListener('click', function() {
+    document.getElementById('fileViewerModal').classList.remove('show');
+    document.body.style.overflow = 'auto';
+  });
+
+  document.getElementById('fileViewerModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  // ===== APPLICATION LOGIC =====
+  (function() {
+    const landingPage = document.getElementById('landingPage');
+    const formPage = document.getElementById('formPage');
+    const clientDashboard = document.getElementById('clientDashboard');
+    const form = document.getElementById('assignmentForm');
+    const backToHomeBtn = document.getElementById('backToHomeBtn');
+    const successModal = document.getElementById('successModal');
+    const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+    const viewDashboardBtn = document.getElementById('viewDashboardBtn');
+    const logoHomeBtn = document.getElementById('logoHomeBtn');
+    const displayClientName = document.getElementById('displayClientName');
+    const displayClientEmail = document.getElementById('displayClientEmail');
+    const ordersList = document.getElementById('ordersList');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
+    const newOrderFromDashboard = document.getElementById('newOrderFromDashboard');
+
+    let currentClient = null;
+    let currentClientId = null;
+
+    // ===== CONTACT MODAL =====
+    const contactModal = document.getElementById('contactModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    function openContactModal(e) {
+      if (e) e.preventDefault();
+      contactModal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeContactModal() {
+      contactModal.classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+
+    document.querySelectorAll('#navContactSupport, #footerSupportBtn, #aboutContactBtn').forEach(btn => {
+      if (btn) btn.addEventListener('click', openContactModal);
+    });
+
+    closeModalBtn.addEventListener('click', closeContactModal);
+    contactModal.addEventListener('click', (e) => {
+      if (e.target === contactModal) closeContactModal();
+    });
+
+    // ===== PAYMENT MODAL =====
+    const paymentModal = document.getElementById('paymentModal');
+    const closePaymentModalBtn = document.getElementById('closePaymentModalBtn');
+    const copyDetailsBtn = document.getElementById('copyDetailsBtn');
+    const copyNotification = document.getElementById('copyNotification');
+
+    function openPaymentModal(e) {
+      if (e) e.preventDefault();
+      paymentModal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePaymentModal() {
+      paymentModal.classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+
+    document.querySelectorAll('#navPaymentBtn, #heroPaymentBtn, #aboutPaymentBtn').forEach(btn => {
+      if (btn) btn.addEventListener('click', openPaymentModal);
+    });
+
+    closePaymentModalBtn.addEventListener('click', closePaymentModal);
+    paymentModal.addEventListener('click', (e) => {
+      if (e.target === paymentModal) closePaymentModal();
+    });
+
+    copyDetailsBtn.addEventListener('click', function() {
+      const details = `Country: Kenya\nDelivery Method: Mobile Money\nMobile Wallet: M-Pesa\nRecipient Name: Antony Makumi\nPhone Number: 0746357646\n\nPay via Remitly: https://www.remitly.com/us/en/providers-kenya/send-money-to-m-pesa`;
+      navigator.clipboard.writeText(details).then(() => {
+        copyNotification.classList.add('show');
+        setTimeout(() => { copyNotification.classList.remove('show'); }, 3000);
+      }).catch(() => { alert('Copy these details:\n\n' + details); });
+    });
+
+    // ===== LOGO HOME BUTTON =====
+    logoHomeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      showLanding();
+    });
+
+    // ===== SHOW/HIDE FORM =====
+    function showForm() {
+      landingPage.classList.add('hidden');
+      formPage.classList.add('active');
+      clientDashboard.classList.remove('active');
+      document.body.style.background = '#f5f7fa';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (typeof prefillOrderFormWithCurrentUser === 'function') {
+        prefillOrderFormWithCurrentUser();
+      }
+    }
+
+    function showLanding() {
+      landingPage.classList.remove('hidden');
+      formPage.classList.remove('active');
+      clientDashboard.classList.remove('active');
+      document.body.style.background = '';
+      form.reset();
+      document.getElementById('attachments').value = '';
+      document.getElementById('fileList').innerHTML = '';
+      currentClient = null;
+      currentClientId = null;
+    }
+
+    // ===== GET CLIENT ID =====
+    function getClientId(email, phone) {
+      const key = `client_${email}_${phone}`;
+      let clientId = localStorage.getItem(key);
+      if (!clientId) {
+        clientId = 'C' + Date.now().toString().slice(-6);
+        localStorage.setItem(key, clientId);
+        const clients = JSON.parse(localStorage.getItem('clients')) || {};
+        clients[clientId] = { email, phone, name: '' };
+        localStorage.setItem('clients', JSON.stringify(clients));
+      }
+      return clientId;
+    }
+
+    // ===== GET CLIENT ORDERS =====
+    function getClientOrders(clientId) {
+      const orders = JSON.parse(localStorage.getItem('allOrders')) || {};
+      return Object.values(orders).filter(order => order.clientId === clientId);
+    }
+
+    // ===== SAVE ORDER =====
+    function saveOrder(orderData) {
+      const orders = JSON.parse(localStorage.getItem('allOrders')) || {};
+      orders[orderData.id] = orderData;
+      localStorage.setItem('allOrders', JSON.stringify(orders));
+    }
+
+    // ===== UPDATE ORDER STATUS =====
+    function updateOrderStatus(orderId, status, completedFile) {
+      const orders = JSON.parse(localStorage.getItem('allOrders')) || {};
+      if (orders[orderId]) {
+        orders[orderId].status = status;
+        if (completedFile) {
+          orders[orderId].completedFile = completedFile;
+          orders[orderId].completedDate = new Date().toLocaleString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          });
+        }
+        localStorage.setItem('allOrders', JSON.stringify(orders));
+        return true;
+      }
+      return false;
+    }
+
+    // ===== VIEW FILE FUNCTION =====
+    window.viewFile = function(orderId, fileIndex) {
+      const fileData = getStoredFile(orderId, fileIndex);
+      if (fileData) {
+        openFileViewer(fileData);
+      } else {
+        alert('File not found. It may have been removed or the data is missing.');
+      }
+    };
+
+    // ===== RENDER ORDERS =====
+    function renderOrders(clientId) {
+      const orders = getClientOrders(clientId);
+      
+      if (orders.length === 0) {
+        ordersList.innerHTML = '<p style="text-align: center; color: var(--text-gray); padding: 1rem 0;">No orders found. Place your first order now!</p>';
+        return;
+      }
+
+      orders.sort((a, b) => b.id - a.id);
+
+      let html = '';
+      orders.forEach(order => {
+        const statusClass = (order.status || 'pending').toLowerCase().replace(' ', '-');
+        const statusDisplay = order.status || 'Pending';
+        
+        // Build attachments display with click to view
+        let attachmentsHtml = '';
+        if (order.files && order.files.length > 0) {
+          attachmentsHtml = `<div class="order-attachments">`;
+          order.files.forEach((file, index) => {
+            const fileData = getStoredFile(order.id, index);
+            if (fileData) {
+              attachmentsHtml += `<span class="attch-tag" onclick="viewFile(${order.id}, ${index})" title="Click to view"><i class="fas fa-eye"></i> ${file}</span>`;
+            } else {
+              attachmentsHtml += `<span class="attch-tag"><i class="fas fa-file"></i> ${file}</span>`;
+            }
+          });
+          attachmentsHtml += `</div>`;
+        }
+        
+        html += `
+          <div class="order-item" data-order-id="${order.id}">
+            <div class="order-header">
+              <span class="order-id">#${order.id}</span>
+              <span class="order-date">${order.submitted || 'N/A'}</span>
+            </div>
+            <div class="order-subject">${order.subject}</div>
+            <div class="order-details">${order.instructions || 'No details provided'}</div>
+            ${attachmentsHtml}
+            <div class="order-footer">
+              <span class="status-badge ${statusClass}">${statusDisplay}</span>
+              <div class="order-actions">
+                <button class="btn-view" onclick="viewOrderDetails(${order.id})">
+                  <i class="fas fa-eye"></i> View Details
+                </button>
+                ${order.status !== 'Completed' ? `
+                  <button class="btn-complete" onclick="showCompleteOrder(${order.id})">
+                    <i class="fas fa-check"></i> Complete
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+            <div class="order-detail-view" id="orderDetail_${order.id}">
+              <!-- Populated by JavaScript -->
+            </div>
+          </div>
+        `;
+      });
+      
+      ordersList.innerHTML = html;
+    }
+
+    // ===== VIEW ORDER DETAILS =====
+    window.viewOrderDetails = function(orderId) {
+      const detailView = document.getElementById(`orderDetail_${orderId}`);
+      if (!detailView) return;
+      
+      if (detailView.classList.contains('active')) {
+        detailView.classList.remove('active');
+        return;
+      }
+      
+      document.querySelectorAll('.order-detail-view.active').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      const orders = JSON.parse(localStorage.getItem('allOrders')) || {};
+      const order = orders[orderId];
+      if (!order) return;
+      
+      // Build attachments list for detail view with view functionality
+      let attachmentsDetailHtml = '';
+      if (order.files && order.files.length > 0) {
+        attachmentsDetailHtml = `<div class="attch-list">`;
+        order.files.forEach((file, index) => {
+          const fileData = getStoredFile(order.id, index);
+          if (fileData) {
+            attachmentsDetailHtml += `<span class="attch-item" onclick="viewFile(${order.id}, ${index})" title="Click to view"><i class="fas fa-eye"></i> ${file}</span>`;
+          } else {
+            attachmentsDetailHtml += `<span class="attch-item"><i class="fas fa-file"></i> ${file}</span>`;
+          }
+        });
+        attachmentsDetailHtml += `</div>`;
+      } else {
+        attachmentsDetailHtml = 'No attachments';
+      }
+      
+      // Check for completed file
+      let completedFileHtml = '';
+      if (order.completedFile) {
+        // Store completed file in localStorage if not already stored
+        const completedKey = `completed_${order.id}`;
+        let completedData = localStorage.getItem(completedKey);
+        if (!completedData && order.completedFile.data) {
+          localStorage.setItem(completedKey, JSON.stringify(order.completedFile));
+          completedData = order.completedFile;
+        } else if (completedData) {
+          completedData = JSON.parse(completedData);
+        }
+        
+        if (completedData) {
+          completedFileHtml = `
+            <div class="detail-row">
+              <span class="label">Completed File</span>
+              <span class="value">
+                <span class="attch-item" onclick="viewCompletedFile(${order.id})" style="cursor: pointer; background: var(--success-green); color: white; padding: 0.2rem 0.8rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                  <i class="fas fa-check-circle"></i> ${completedData.name}
+                </span>
+                <span style="font-size: 0.75rem; color: var(--text-gray); margin-left: 0.5rem;">(${order.completedDate || 'N/A'})</span>
+              </span>
+            </div>
+          `;
+        }
+      }
+      
+      let html = `
+        <div class="detail-row">
+          <span class="label">Order ID</span>
+          <span class="value">#${order.id}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Subject</span>
+          <span class="value">${order.subject}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Requirements</span>
+          <span class="value">${order.instructions || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Attachments</span>
+          <span class="value">${attachmentsDetailHtml}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Submitted</span>
+          <span class="value">${order.submitted || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Status</span>
+          <span class="value"><span class="status-badge ${(order.status || 'pending').toLowerCase().replace(' ', '-')}">${order.status || 'Pending'}</span></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Client Name</span>
+          <span class="value">${order.clientName || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Email</span>
+          <span class="value">${order.email || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Phone</span>
+          <span class="value">${order.phone || 'N/A'}</span>
+        </div>
+        ${completedFileHtml}
+      `;
+      
+      if (order.status !== 'Completed') {
+        html += `
+          <div class="complete-upload-area">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p><strong>Mark as Completed</strong><br>Upload the completed work file</p>
+            <input type="file" id="completeFile_${order.id}" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.png,.jpg,.jpeg" onchange="uploadCompleteFile(${order.id}, this)">
+            <button class="btn-mark-complete" onclick="markOrderComplete(${order.id})">
+              <i class="fas fa-check-circle"></i> Mark as Completed
+            </button>
+          </div>
+        `;
+      }
+      
+      detailView.innerHTML = html;
+      detailView.classList.add('active');
+    };
+
+    // ===== VIEW COMPLETED FILE =====
+    window.viewCompletedFile = function(orderId) {
+      const key = `completed_${orderId}`;
+      let fileData = localStorage.getItem(key);
+      if (fileData) {
+        const data = JSON.parse(fileData);
+        // If data is stored as base64, open it
+        if (data.data) {
+          openFileViewer(data);
+        } else {
+          alert('File data not found.');
+        }
+      } else {
+        alert('Completed file not found.');
+      }
+    };
+
+    // ===== SHOW COMPLETE ORDER =====
+    window.showCompleteOrder = function(orderId) {
+      viewOrderDetails(orderId);
+      const detailView = document.getElementById(`orderDetail_${orderId}`);
+      if (detailView) {
+        setTimeout(() => {
+          detailView.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    };
+
+    // ===== UPLOAD COMPLETE FILE =====
+    window.uploadCompleteFile = function(orderId, input) {
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const fileData = {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            data: e.target.result
+          };
+          // Store completed file
+          const key = `completed_${orderId}`;
+          localStorage.setItem(key, JSON.stringify(fileData));
+          
+          const orders = JSON.parse(localStorage.getItem('allOrders')) || {};
+          if (orders[orderId]) {
+            orders[orderId].pendingFile = fileData;
+            localStorage.setItem('allOrders', JSON.stringify(orders));
+          }
+          
+          const uploadArea = input.closest('.complete-upload-area');
+          if (uploadArea) {
+            uploadArea.innerHTML = `
+              <i class="fas fa-check-circle" style="color: var(--success-green);"></i>
+              <p><strong>File selected:</strong> ${file.name} (${(file.size / 1024).toFixed(1)} KB)</p>
+              <button class="btn-mark-complete" onclick="markOrderComplete(${orderId})">
+                <i class="fas fa-check-circle"></i> Confirm Complete
+              </button>
+              <button class="btn-secondary-small" onclick="resetCompleteUpload(${orderId})">
+                <i class="fas fa-undo"></i> Change File
+              </button>
+            `;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    // ===== RESET COMPLETE UPLOAD =====
+    window.resetCompleteUpload = function(orderId) {
+      const key = `completed_${orderId}`;
+      localStorage.removeItem(key);
+      const orders = JSON.parse(localStorage.getItem('allOrders')) || {};
+      if (orders[orderId]) {
+        delete orders[orderId].pendingFile;
+        localStorage.setItem('allOrders', JSON.stringify(orders));
+      }
+      viewOrderDetails(orderId);
+    };
+
+    // ===== MARK ORDER COMPLETE =====
+    window.markOrderComplete = function(orderId) {
+      const orders = JSON.parse(localStorage.getItem('allOrders')) || {};
+      const order = orders[orderId];
+      
+      if (!order) {
+        alert('Order not found!');
+        return;
+      }
+      
+      const key = `completed_${orderId}`;
+      let completedFile = localStorage.getItem(key);
+      
+      if (!completedFile) {
+        // Check if there's a pending file
+        if (order.pendingFile && order.pendingFile.data) {
+          completedFile = JSON.stringify(order.pendingFile);
+          localStorage.setItem(key, completedFile);
+        }
+      }
+      
+      if (!completedFile) {
+        alert('Please upload the completed work file first!');
+        return;
+      }
+      
+      const fileData = JSON.parse(completedFile);
+      
+      if (!confirm(`Mark order #${orderId} as COMPLETED?\n\nFile: ${fileData.name}\n\nThis action will notify the client.`)) {
+        return;
+      }
+      
+      if (updateOrderStatus(orderId, 'Completed', fileData)) {
+        alert(`✅ Order #${orderId} marked as completed!\n\nFile: ${fileData.name}\n\nThe client can now view the completed work.`);
+        renderOrders(currentClientId);
+        
+        const chatKey = `chat_${currentClientId}`;
+        const messages = JSON.parse(localStorage.getItem(chatKey)) || [];
+        messages.push({
+          sender: 'admin',
+          text: `✅ Order #${orderId} has been completed! You can view the completed file in the order details.`,
+          time: new Date().toLocaleString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          })
+        });
+        localStorage.setItem(chatKey, JSON.stringify(messages));
+        loadChatMessages(currentClientId);
+      } else {
+        alert('Failed to update order status. Please try again.');
+      }
+    };
+
+    // ===== LOAD CHAT MESSAGES =====
+    function loadChatMessages(clientId) {
+      const key = `chat_${clientId}`;
+      const messages = JSON.parse(localStorage.getItem(key)) || [];
+      
+      if (messages.length === 0) {
+        chatMessages.innerHTML = `
+          <div class="chat-empty">
+            <i class="fas fa-comment-dots"></i>
+            <p>No messages yet. Start the conversation!</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      messages.forEach(msg => {
+        const isClient = msg.sender === 'client';
+        html += `
+          <div class="chat-message ${isClient ? 'client' : 'admin'}">
+            <div class="msg-sender">${isClient ? '👤 You' : '🛡️ Admin'}</div>
+            ${msg.text}
+            <span class="msg-time">${msg.time}</span>
+          </div>
+        `;
+      });
+      chatMessages.innerHTML = html;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // ===== SEND CHAT MESSAGE =====
+    function sendChatMessage() {
+      const text = chatInput.value.trim();
+      if (!text || !currentClientId) return;
+
+      const key = `chat_${currentClientId}`;
+      const messages = JSON.parse(localStorage.getItem(key)) || [];
+      
+      const newMsg = {
+        sender: 'client',
+        text: text,
+        time: new Date().toLocaleString('en-US', { 
+          month: 'short', 
+          day: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        })
+      };
+      
+      messages.push(newMsg);
+      localStorage.setItem(key, JSON.stringify(messages));
+      
+      chatInput.value = '';
+      loadChatMessages(currentClientId);
+    }
+
+    sendChatBtn.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+
+    // ===== SHOW CLIENT DASHBOARD =====
+    function showClientDashboard(clientData) {
+      landingPage.classList.add('hidden');
+      formPage.classList.remove('active');
+      clientDashboard.classList.add('active');
+      document.body.style.background = '#f5f7fa';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      currentClient = clientData;
+      currentClientId = getClientId(clientData.email, clientData.phone);
+      
+      displayClientName.textContent = clientData.clientName;
+      displayClientEmail.textContent = clientData.email;
+      
+      renderOrders(currentClientId);
+      loadChatMessages(currentClientId);
+    }
+
+    // ===== ORDER NOW BUTTONS =====
+    document.querySelectorAll('#orderNowBtn, #heroOrderBtn, #aboutOrderBtn').forEach(btn => {
+      if (btn) btn.addEventListener('click', showForm);
+    });
+
+    // ===== NEW ORDER FROM DASHBOARD =====
+    newOrderFromDashboard.addEventListener('click', function() {
+      landingPage.classList.add('hidden');
+      formPage.classList.add('active');
+      clientDashboard.classList.remove('active');
+      document.body.style.background = '#f5f7fa';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      if (currentClient) {
+        document.getElementById('clientName').value = currentClient.clientName || '';
+        document.getElementById('email').value = currentClient.email || '';
+        let phone = currentClient.phone || '';
+        if (phone.startsWith('+')) {
+          const parts = phone.split(' ');
+          if (parts.length > 1) {
+            phone = parts.slice(1).join(' ');
+          }
+        }
+        document.getElementById('phone').value = phone;
+      }
+    });
+
+    backToHomeBtn.addEventListener('click', showLanding);
+
+    // ===== SUCCESS MODAL =====
+    function openSuccessModal(assignmentData) {
+      successModal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      viewDashboardBtn.dataset.assignment = JSON.stringify(assignmentData);
+    }
+
+    function closeSuccessModal() {
+      successModal.classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+
+    viewDashboardBtn.addEventListener('click', function() {
+      const data = JSON.parse(this.dataset.assignment);
+      closeSuccessModal();
+      showClientDashboard(data);
+    });
+
+    closeSuccessBtn.addEventListener('click', closeSuccessModal);
+    successModal.addEventListener('click', (e) => {
+      if (e.target === successModal) closeSuccessModal();
+    });
+    // Form submission is handled asynchronously by js/app.js (handleOrderSubmit)
+
+    // ===== GET FREE QUOTE =====
+    document.getElementById('heroQuoteBtn')?.addEventListener('click', function(e) {
+      e.preventDefault();
+      alert('📝 Get a Free Quote!\n\nPlease describe your assignment requirements and we\'ll get back to you within 24 hours.\n\nYou can also reach us on WhatsApp or SMS for faster response.');
+    });
+
+    // ===== HAMBURGER MENU =====
+    document.getElementById('hamburger')?.addEventListener('click', function() {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('open');
+      });
+    });
+
+    // ===== SMOOTH SCROLL =====
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId !== '#') {
+          e.preventDefault();
+          const target = document.querySelector(targetId);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+
+    // ===== KEYBOARD SHORTCUTS =====
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSuccessModal();
+        closePaymentModal();
+        closeContactModal();
+        document.getElementById('fileViewerModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    console.log('✍️ First Class Writers Hub loaded successfully!');
+    console.log('📧 Admin Email: firstclasswritersk@gmail.com');
+    console.log('💬 Admin WhatsApp: +254746357646');
+    console.log('👤 Manager: Antony Makumi');
+    console.log('📎 Files are stored in localStorage and can be viewed by clicking on attachment tags');
+  })();
+</script>
+
+<script src="js/app.js"></script>
+</body>
+</html>

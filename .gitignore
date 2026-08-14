@@ -1,0 +1,10 @@
+# SQLite local test database
+writers_hub.sqlite
+
+# Client attachment uploads (keep folder structure)
+uploads/*
+!uploads/.gitkeep
+
+# System & OS junk
+.DS_Store
+*.log
