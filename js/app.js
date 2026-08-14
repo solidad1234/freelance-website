@@ -414,8 +414,15 @@ async function loadChatMessages(orderId) {
     }
 
     try {
-        const res = await fetch(`api/chat.php?action=get_messages&order_id=${orderId}`);
-        const data = await res.json();
+        const res = await fetch(`api/orders.php?action=get_messages&order_id=${orderId}`);
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Client Chat non-JSON response:', text);
+            return;
+        }
 
         if (data.success) {
             renderChatBubbleList(data.messages);
@@ -437,16 +444,42 @@ function renderClientOrderHeader(order) {
     if (!header) return;
 
     let actionsHtml = '';
-    if (order.status !== 'Completed') {
-        actionsHtml = `<button onclick="updateClientOrderStatus(${order.id}, 'Completed')" class="btn-complete-order" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;"><i class="fas fa-check-circle"></i> Mark as Completed</button>`;
-    } else {
-        actionsHtml = `<button onclick="updateClientOrderStatus(${order.id}, 'In Progress')" class="btn-revision-order" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;"><i class="fas fa-redo"></i> Request Revision / Complaint</button>`;
+    if (order.status !== 'Completed' && order.status !== 'Cancelled') {
+        actionsHtml += `<button onclick="updateClientOrderStatus(${order.id}, 'Completed')" class="btn-complete-order" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; margin-right: 6px;"><i class="fas fa-check-circle"></i> Mark as Completed</button>`;
+        actionsHtml += `<button onclick="confirmCancelOrder(${order.id})" class="btn-cancel-order" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;"><i class="fas fa-ban"></i> Cancel Order</button>`;
+    } else if (order.status === 'Completed') {
+        actionsHtml += `<button onclick="updateClientOrderStatus(${order.id}, 'In Progress')" class="btn-revision-order" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;"><i class="fas fa-redo"></i> Request Revision / Complaint</button>`;
+    }
+
+    let filePills = '';
+    if (order.attachments && order.attachments.length > 0) {
+        filePills = '<div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;">';
+        order.attachments.forEach(att => {
+            const isSolution = att.original_name.startsWith('[SOLUTION]');
+            const style = isSolution
+                ? 'background: #dcfce7; color: #15803d; border: 1px solid #86efac;'
+                : 'background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;';
+            const label = isSolution ? `⭐ Solution: ${escapeHtml(att.original_name.replace('[SOLUTION] ', ''))}` : escapeHtml(att.original_name);
+            filePills += `<a href="api/download.php?id=${att.id}" target="_blank" style="padding: 4px 10px; font-size: 0.78rem; font-weight: 600; ${style} border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="fas fa-download"></i> ${label}</a>`;
+        });
+        filePills += '</div>';
     }
 
     header.innerHTML = `
-        <span><i class="fas fa-comments" style="color: var(--primary-orange);"></i> Order <strong>${order.order_number}</strong> (${escapeHtml(order.status)})</span>
-        <div>${actionsHtml}</div>
+        <div style="width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span><i class="fas fa-comments" style="color: var(--primary-orange);"></i> Order <strong>${order.order_number}</strong> (${escapeHtml(order.status)})</span>
+                <div>${actionsHtml}</div>
+            </div>
+            ${filePills}
+        </div>
     `;
+}
+
+function confirmCancelOrder(orderId) {
+    if (confirm("Are you sure you want to cancel this order?")) {
+        updateClientOrderStatus(orderId, 'Cancelled');
+    }
 }
 
 async function updateClientOrderStatus(orderId, newStatus) {
@@ -527,11 +560,18 @@ async function handleSendChatMessage() {
 
         input.value = '';
 
-        const res = await fetch('api/chat.php?action=send_message', {
+        const res = await fetch('api/orders.php?action=send_message', {
             method: 'POST',
             body: formData
         });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Client Send Chat non-JSON response:', text);
+            return;
+        }
 
         if (data.success) {
             await loadChatMessages(activeChatOrderId);

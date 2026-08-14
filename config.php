@@ -142,6 +142,11 @@ function get_db() {
  */
 function json_response($data, $status_code = 200) {
     header('Content-Type: application/json; charset=utf-8');
+    // On shared hosts like InfinityFree, 401/403/404 HTTP codes trigger HTML error page intercepts.
+    // Setting 200 ensures client receives valid JSON payload.
+    if ($status_code >= 400 && $status_code <= 404) {
+        $status_code = 200;
+    }
     http_response_code($status_code);
     echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;

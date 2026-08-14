@@ -211,10 +211,14 @@ function renderAdminOrdersTable(orders) {
 /**
  * Open Order Details Modal
  */
+let activeModalOrderId = null;
+let selectedAdminFile = null;
+
 function openOrderDetailsModal(orderId) {
     const order = allOrders.find(o => o.id == orderId);
     if (!order) return;
 
+    activeModalOrderId = order.id;
     document.getElementById('modalOrderNumber').innerHTML = `<i class="fas fa-file-alt" style="color: var(--primary-orange);"></i> Details for Order ${order.order_number}`;
     document.getElementById('modalOrderSubmitted').textContent = `Submitted: ${order.created_at}`;
     document.getElementById('modalClientName').textContent = order.client_name;
@@ -230,18 +234,25 @@ function openOrderDetailsModal(orderId) {
 
     const attachmentsContainer = document.getElementById('modalOrderAttachments');
     if (order.attachments && order.attachments.length > 0) {
-        attachmentsContainer.innerHTML = order.attachments.map(att => 
-            `<a href="api/download.php?id=${att.id}" target="_blank" class="attachment-pill" style="padding: 8px 14px; font-size: 0.85rem; font-weight: 600; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 8px;"><i class="fas fa-download"></i> Download ${escapeHtml(att.original_name)}</a>`
-        ).join('');
+        attachmentsContainer.innerHTML = order.attachments.map(att => {
+            const isSolution = att.original_name.startsWith('[SOLUTION]');
+            const pillStyle = isSolution 
+                ? 'background: #dcfce7; color: #15803d; border: 1px solid #86efac;'
+                : 'background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;';
+            const icon = isSolution ? 'fa-check-circle' : 'fa-download';
+            return `<a href="api/download.php?id=${att.id}" target="_blank" class="attachment-pill" style="padding: 8px 14px; font-size: 0.85rem; font-weight: 600; ${pillStyle} border-radius: 8px;"><i class="fas ${icon}"></i> ${escapeHtml(att.original_name)}</a>`;
+        }).join('');
     } else {
-        attachmentsContainer.innerHTML = `<span style="font-size: 0.85rem; color: #94a3b8; italic;">No attachments uploaded for this order.</span>`;
+        attachmentsContainer.innerHTML = `<span style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">No attachments uploaded for this order yet.</span>`;
     }
 
     const openChatBtn = document.getElementById('modalOpenChatBtn');
-    openChatBtn.onclick = () => {
-        closeOrderDetailsModal();
-        openAdminChatDrawer(order.id, order.order_number, order.client_name);
-    };
+    if (openChatBtn) {
+        openChatBtn.onclick = () => {
+            closeOrderDetailsModal();
+            openAdminChatDrawer(order.id, order.order_number, order.client_name);
+        };
+    }
 
     const modal = document.getElementById('orderDetailsModal');
     modal.style.display = 'flex';
@@ -249,9 +260,87 @@ function openOrderDetailsModal(orderId) {
 }
 
 function closeOrderDetailsModal() {
+    activeModalOrderId = null;
     const modal = document.getElementById('orderDetailsModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+}
+
+async function handleModalDeliverWork(input) {
+    if (!activeModalOrderId || !input.files || input.files.length === 0) return;
+    const file = input.files[0];
+
+    const formData = new FormData();
+    formData.append('order_id', activeModalOrderId);
+    formData.append('file', file);
+
+    try {
+        const res = await fetch('api/orders.php?action=upload_submission', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            alert(`Success: Solution file '${file.name}' delivered to client!`);
+            input.value = '';
+            closeOrderDetailsModal();
+            loadAdminOrders();
+        } else {
+            alert(data.error || 'Failed to upload solution file.');
+        }
+    } catch (err) {
+        console.error('Deliver solution error:', err);
+        alert('Connection error occurred while uploading file.');
+    }
+}
+
+async function handleAdminDeliverWork(input) {
+    if (!activeAdminChatOrderId || !input.files || input.files.length === 0) return;
+    const file = input.files[0];
+
+    const formData = new FormData();
+    formData.append('order_id', activeAdminChatOrderId);
+    formData.append('file', file);
+
+    try {
+        const res = await fetch('api/orders.php?action=upload_submission', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            alert(`Success: Completed work '${file.name}' delivered to client!`);
+            input.value = '';
+            loadAdminChatMessages(activeAdminChatOrderId);
+            loadAdminOrders();
+        } else {
+            alert(data.error || 'Failed to upload solution file.');
+        }
+    } catch (err) {
+        console.error('Deliver solution error:', err);
+        alert('Connection error occurred while uploading file.');
+    }
+}
+
+function handleAdminFileSelected(input) {
+    if (input.files && input.files.length > 0) {
+        selectedAdminFile = input.files[0];
+        const preview = document.getElementById('adminFilePreview');
+        if (preview) {
+            preview.innerHTML = `<i class="fas fa-paperclip"></i> Attached: <strong>${escapeHtml(selectedAdminFile.name)}</strong> <button onclick="clearAdminSelectedFile()" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold; margin-left:8px;">&times;</button>`;
+            preview.style.display = 'block';
+        }
+    }
+}
+
+function clearAdminSelectedFile() {
+    selectedAdminFile = null;
+    const input = document.getElementById('adminChatAttachment');
+    if (input) input.value = '';
+    const preview = document.getElementById('adminFilePreview');
+    if (preview) preview.style.display = 'none';
 }
 
 async function updateOrderStatus(orderId, newStatus) {
@@ -296,6 +385,7 @@ function openAdminChatDrawer(orderId, orderNumber, clientName) {
 
 function closeAdminChatDrawer() {
     activeAdminChatOrderId = null;
+    clearAdminSelectedFile();
     document.getElementById('adminChatDrawer').classList.remove('show');
     if (adminChatPollInterval) {
         clearInterval(adminChatPollInterval);
@@ -305,8 +395,15 @@ function closeAdminChatDrawer() {
 
 async function loadAdminChatMessages(orderId) {
     try {
-        const res = await fetch(`api/chat.php?action=get_messages&order_id=${orderId}`);
-        const data = await res.json();
+        const res = await fetch(`api/orders.php?action=get_messages&order_id=${orderId}`);
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Admin Chat non-JSON response:', text);
+            return;
+        }
 
         if (data.success) {
             renderAdminChatBubbles(data.messages);
@@ -333,7 +430,7 @@ function renderAdminChatBubbles(messages) {
 
         let attachmentHtml = '';
         if (msg.attachment_name) {
-            attachmentHtml = `<div class="msg-file-attachment"><i class="fas fa-paperclip"></i> Attached: ${escapeHtml(msg.attachment_name)}</div>`;
+            attachmentHtml = `<div class="msg-file-attachment" style="margin-top:6px;"><i class="fas fa-paperclip"></i> Attached: <strong>${escapeHtml(msg.attachment_name)}</strong></div>`;
         }
 
         html += `
@@ -357,20 +454,31 @@ async function handleSendAdminChatMessage() {
 
     const input = document.getElementById('adminChatInput');
     const message = input.value.trim();
-    if (!message) return;
+    if (!message && !selectedAdminFile) return;
 
     try {
         const formData = new FormData();
         formData.append('order_id', activeAdminChatOrderId);
         formData.append('message', message);
+        if (selectedAdminFile) {
+            formData.append('attachment', selectedAdminFile);
+        }
 
         input.value = '';
+        clearAdminSelectedFile();
 
-        const res = await fetch('api/chat.php?action=send_message', {
+        const res = await fetch('api/orders.php?action=send_message', {
             method: 'POST',
             body: formData
         });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Admin Send Chat non-JSON response:', text);
+            return;
+        }
 
         if (data.success) {
             loadAdminChatMessages(activeAdminChatOrderId);

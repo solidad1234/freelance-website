@@ -338,10 +338,18 @@
       </div>
       <button class="close-auth-modal" style="color: white; background: rgba(255,255,255,0.2);" onclick="closeAdminChatDrawer()">&times;</button>
     </div>
+    <div style="background: #f1f5f9; padding: 8px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 0.8rem; color: #475569; font-weight: 600;"><i class="fas fa-file-upload"></i> Deliver Solution:</span>
+      <button onclick="document.getElementById('adminDeliverWorkInput').click()" style="padding: 5px 12px; font-size: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"><i class="fas fa-cloud-upload-alt"></i> Upload Completed Paper</button>
+      <input type="file" id="adminDeliverWorkInput" style="display:none;" onchange="handleAdminDeliverWork(this)">
+    </div>
     <div class="chat-drawer-body" id="adminChatMessages">
       <!-- Chat bubbles -->
     </div>
+    <div id="adminFilePreview" style="display:none; padding: 6px 14px; background: #eff6ff; font-size: 0.8rem; color: #1d4ed8; border-top: 1px solid #bfdbfe; font-weight: 600;"></div>
     <div class="chat-drawer-footer">
+      <input type="file" id="adminChatAttachment" style="display:none;" onchange="handleAdminFileSelected(this)">
+      <button type="button" onclick="document.getElementById('adminChatAttachment').click()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; border-radius: 8px; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Attach file"><i class="fas fa-paperclip"></i></button>
       <textarea id="adminChatInput" placeholder="Type a message to reply to client..." rows="1" style="flex:1; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); outline: none;"></textarea>
       <button class="btn-chat-open" id="adminSendChatBtn"><i class="fas fa-paper-plane"></i> Send</button>
     </div>
@@ -388,7 +396,11 @@
 
         <!-- Attachments Section -->
         <div>
-          <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Attached Files</label>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Attached & Delivered Files</label>
+            <button onclick="document.getElementById('modalDeliverWorkInput').click()" style="padding: 4px 10px; font-size: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"><i class="fas fa-plus"></i> Upload Solution File</button>
+            <input type="file" id="modalDeliverWorkInput" style="display:none;" onchange="handleModalDeliverWork(this)">
+          </div>
           <div id="modalOrderAttachments" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px;">
             <!-- Attachment download buttons inserted here -->
           </div>
