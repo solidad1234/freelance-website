@@ -69,13 +69,15 @@ function handle_register() {
     $stmt->execute([$name, $email, $phone, $password_hash]);
     $user_id = $db->lastInsertId();
 
-    // Send Welcome Email
-    send_email_notification(
-        $email,
-        $name,
-        "Welcome to First Class Writers Hub!",
-        "Thank you for creating an account with First Class Writers Hub!\n\nYou can now place orders, track your assignment status, send attached files, and chat directly with our team from your dashboard."
-    );
+    // Send Welcome Email — non-fatal
+    try {
+        send_email_notification(
+            $email,
+            $name,
+            "Welcome to First Class Writers Hub!",
+            "Thank you for creating an account with First Class Writers Hub!\n\nYou can now place orders, track your assignment status, send attached files, and chat directly with our team from your dashboard."
+        );
+    } catch (Exception $e) { /* silent */ }
 
     json_response([
         'success' => true,
@@ -205,13 +207,15 @@ function handle_forgot_password() {
     $update = $db->prepare("UPDATE users SET reset_code = ?, reset_expires = ? WHERE id = ?");
     $update->execute([$reset_code, $expires, $user['id']]);
 
-    // Send email notification with reset code
-    send_email_notification(
-        $user['email'],
-        $user['name'],
-        "Password Reset Code - First Class Writers Hub",
-        "You requested to reset your password.\n\nYour 6-digit Password Reset Code is: " . $reset_code . "\n\nThis code will expire in 1 hour. Enter this code on the portal to set a new password."
-    );
+    // Send email notification with reset code — non-fatal
+    try {
+        send_email_notification(
+            $user['email'],
+            $user['name'],
+            "Password Reset Code - First Class Writers Hub",
+            "You requested to reset your password.\n\nYour 6-digit Password Reset Code is: " . $reset_code . "\n\nThis code will expire in 1 hour. Enter this code on the portal to set a new password."
+        );
+    } catch (Exception $e) { /* silent */ }
 
     json_response([
         'success' => true,

@@ -394,15 +394,32 @@
           <div id="modalOrderInstructions" style="margin-top: 6px; padding: 1rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; max-height: 250px; overflow-y: auto; white-space: pre-wrap; font-size: 0.9rem; color: #334155; line-height: 1.6;"></div>
         </div>
 
-        <!-- Attachments Section -->
+        <!-- Attachments Section - split into Submitted vs Delivered -->
         <div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Attached & Delivered Files</label>
-            <button onclick="document.getElementById('modalDeliverWorkInput').click()" style="padding: 4px 10px; font-size: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"><i class="fas fa-plus"></i> Upload Solution File</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Files</label>
+            <button onclick="document.getElementById('modalDeliverWorkInput').click()" style="padding: 4px 10px; font-size: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"><i class="fas fa-cloud-upload-alt"></i> Upload Solution File</button>
             <input type="file" id="modalDeliverWorkInput" style="display:none;" onchange="handleModalDeliverWork(this)">
           </div>
-          <div id="modalOrderAttachments" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px;">
-            <!-- Attachment download buttons inserted here -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <!-- Submitted Files (client uploads) -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+              <div style="font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <i class="fas fa-paperclip" style="color: #3b82f6;"></i> Attached Files
+              </div>
+              <div id="modalSubmittedFiles" style="display: flex; flex-direction: column; gap: 5px; min-height: 32px;">
+                <span style="font-size: 0.82rem; color: #94a3b8; font-style: italic;">No files attached</span>
+              </div>
+            </div>
+            <!-- Delivered Files (solution uploads) -->
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 12px;">
+              <div style="font-size: 0.78rem; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <i class="fas fa-check-circle" style="color: #22c55e;"></i> Uploaded Files
+              </div>
+              <div id="modalSolutionFiles" style="display: flex; flex-direction: column; gap: 5px; min-height: 32px;">
+                <span style="font-size: 0.82rem; color: #94a3b8; font-style: italic;">No solution uploaded yet</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

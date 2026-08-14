@@ -4,6 +4,12 @@
  * First Class Writers Hub Backend
  */
 
+// Start output buffering immediately — catches any stray PHP warnings/notices
+// that would corrupt the JSON response body on production hosts like InfinityFree.
+if (ob_get_level() === 0) {
+    ob_start();
+}
+
 // Start session securely if not already started
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
@@ -141,10 +147,16 @@ function get_db() {
  * Output JSON API Response and terminate script
  */
 function json_response($data, $status_code = 200) {
+    // Discard any stray output (PHP notices, warnings, mail() debug text)
+    // so that only clean JSON reaches the browser.
+    if (ob_get_length() > 0) {
+        ob_clean();
+    }
     header('Content-Type: application/json; charset=utf-8');
-    // On shared hosts like InfinityFree, 401/403/404 HTTP codes trigger HTML error page intercepts.
-    // Setting 200 ensures client receives valid JSON payload.
-    if ($status_code >= 400 && $status_code <= 404) {
+    // InfinityFree (and many shared hosts) intercept 4xx/5xx HTTP codes and
+    // return their own HTML error page instead of our JSON payload.
+    // Force 200 for all error responses so the browser always gets JSON.
+    if ($status_code >= 400) {
         $status_code = 200;
     }
     http_response_code($status_code);

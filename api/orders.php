@@ -133,23 +133,27 @@ function handle_create_order() {
     }
 
     // Insert Initial System Welcome Chat Message
-    $initial_msg = "📢 Order {$order_number} has been created successfully! Our team will review your requirements and respond shortly. Feel free to send further details or questions in this chat.";
+    $initial_msg = "\xF0\x9F\x93\xA2 Order {$order_number} has been created successfully! Our team will review your requirements and respond shortly. Feel free to send further details or questions in this chat.";
     $stmt_msg = $db->prepare("INSERT INTO chat_messages (order_id, sender_id, sender_role, message) VALUES (?, ?, 'admin', ?)");
     $stmt_msg->execute([$order_id, $current_user['id'], $initial_msg]);
 
-    // Send Email Notification to Client
-    $client_email_body = "Your order {$order_number} ('{$subject}') has been submitted successfully.\n\n" .
-                         "Requirements: {$instructions}\n" .
-                         "Attachments: " . (count($uploaded_files) > 0 ? implode(', ', $uploaded_files) : 'None') . "\n\n" .
-                         "Our writers are reviewing your order and will contact you within 15 minutes.";
-    send_email_notification($current_user['email'], $current_user['name'], "Order Received: {$order_number}", $client_email_body);
+    // Send Email Notifications — wrapped in try/catch so mail() failures on
+    // shared hosts (InfinityFree blocks mail()) never abort order creation.
+    try {
+        $client_email_body = "Your order {$order_number} ('{$subject}') has been submitted successfully.\n\n" .
+                             "Requirements: {$instructions}\n" .
+                             "Attachments: " . (count($uploaded_files) > 0 ? implode(', ', $uploaded_files) : 'None') . "\n\n" .
+                             "Our writers are reviewing your order and will contact you within 15 minutes.";
+        send_email_notification($current_user['email'], $current_user['name'], "Order Received: {$order_number}", $client_email_body);
+    } catch (Exception $e) { /* silent — email failure must not block order */ }
 
-    // Send Email Notification to Admin
-    $admin_email_body = "New order {$order_number} submitted by {$current_user['name']} ({$current_user['email']}, Phone: {$current_user['phone']}).\n\n" .
-                        "Subject: {$subject}\n" .
-                        "Instructions: {$instructions}\n" .
-                        "Attachments: " . (count($uploaded_files) > 0 ? implode(', ', $uploaded_files) : 'None');
-    send_email_notification(ADMIN_EMAIL, "Admin", "NEW ORDER: {$order_number} from {$current_user['name']}", $admin_email_body);
+    try {
+        $admin_email_body = "New order {$order_number} submitted by {$current_user['name']} ({$current_user['email']}, Phone: {$current_user['phone']}).\n\n" .
+                            "Subject: {$subject}\n" .
+                            "Instructions: {$instructions}\n" .
+                            "Attachments: " . (count($uploaded_files) > 0 ? implode(', ', $uploaded_files) : 'None');
+        send_email_notification(ADMIN_EMAIL, "Admin", "NEW ORDER: {$order_number} from {$current_user['name']}", $admin_email_body);
+    } catch (Exception $e) { /* silent */ }
 
     json_response([
         'success' => true,
@@ -278,14 +282,16 @@ function handle_update_status() {
     $stmt_msg = $db->prepare("INSERT INTO chat_messages (order_id, sender_id, sender_role, message) VALUES (?, ?, ?, ?)");
     $stmt_msg->execute([$order_id, $user['id'], $sender_role, $status_msg]);
 
-    // Send email notification to counterpart
-    if ($user['role'] === 'admin') {
-        $email_body = "The status of your order {$order['order_number']} ('{$order['subject']}') has been updated to: {$new_status}.\n\nLog in to your portal dashboard to check progress and chat with our team.";
-        send_email_notification($order['client_email'], $order['client_name'], "Order Status Update: {$order['order_number']}", $email_body);
-    } else {
-        $email_body = "Client {$order['client_name']} ({$order['client_email']}) updated status of order {$order['order_number']} to: {$new_status}.";
-        send_email_notification(ADMIN_EMAIL, "Admin", "Client Order Status Update: {$order['order_number']}", $email_body);
-    }
+    // Send email notification to counterpart — non-fatal on InfinityFree
+    try {
+        if ($user['role'] === 'admin') {
+            $email_body = "The status of your order {$order['order_number']} ('{$order['subject']}') has been updated to: {$new_status}.\n\nLog in to your portal dashboard to check progress and chat with our team.";
+            send_email_notification($order['client_email'], $order['client_name'], "Order Status Update: {$order['order_number']}", $email_body);
+        } else {
+            $email_body = "Client {$order['client_name']} ({$order['client_email']}) updated status of order {$order['order_number']} to: {$new_status}.";
+            send_email_notification(ADMIN_EMAIL, "Admin", "Client Order Status Update: {$order['order_number']}", $email_body);
+        }
+    } catch (Exception $e) { /* silent */ }
 
     json_response([
         'success' => true,
@@ -352,10 +358,12 @@ function handle_upload_submission() {
     $stmt_msg = $db->prepare("INSERT INTO chat_messages (order_id, sender_id, sender_role, message, attachment_name) VALUES (?, ?, 'admin', ?, ?)");
     $stmt_msg->execute([$real_order_id, $user['id'], $msg_text, $orig_name]);
 
-    // Send Email to Client
-    $email_subject = "Completed Work Uploaded - Order {$order['order_number']}";
-    $email_body    = "Hello {$order['client_name']},\n\nGreat news! The solution file for your order {$order['order_number']} ('{$order['subject']}') has been uploaded by our admin team.\n\nFile Name: {$orig_name}\n\nPlease log in to your portal dashboard to download and review your file. Once you are satisfied, you can mark the order as completed:\nhttp://firstclasswritershub.free.nf/\n\nThank you for choosing First Class Writers Hub!";
-    send_email_notification($order['client_email'], $order['client_name'], $email_subject, $email_body);
+    // Send Email to Client — non-fatal
+    try {
+        $email_subject = "Completed Work Uploaded - Order {$order['order_number']}";
+        $email_body    = "Hello {$order['client_name']},\n\nGreat news! The solution file for your order {$order['order_number']} ('{$order['subject']}') has been uploaded by our admin team.\n\nFile Name: {$orig_name}\n\nPlease log in to your portal dashboard to download and review your file. Once you are satisfied, you can mark the order as completed:\nhttp://firstclasswritershub.free.nf/\n\nThank you for choosing First Class Writers Hub!";
+        send_email_notification($order['client_email'], $order['client_name'], $email_subject, $email_body);
+    } catch (Exception $e) { /* silent */ }
 
     json_response([
         'success' => true,
@@ -480,22 +488,24 @@ function handle_send_message() {
     $stmt->execute([$real_order_id, $user['id'], $user['role'], $message, $attachment_name]);
     $msg_id = $db->lastInsertId();
 
-    // Send Email Notification to Recipient
-    if ($user['role'] === 'admin') {
-        // Admin sent message -> Email Client
-        $email_subject = "New Message on Order {$order['order_number']}";
-        $email_body    = "You received a new message from First Class Writers Hub regarding order {$order['order_number']} ('{$order['subject']}'):\n\n" .
-                         "\"{$message}\"\n\n" .
-                         "Log in to your portal dashboard to reply.";
-        send_email_notification($order['client_email'], $order['client_name'], $email_subject, $email_body);
-    } else {
-        // Client sent message -> Email Admin
-        $email_subject = "Client Message on Order {$order['order_number']}";
-        $email_body    = "Client {$user['name']} sent a message regarding order {$order['order_number']}:\n\n" .
-                         "\"{$message}\"\n\n" .
-                         "Check Admin Dashboard to reply.";
-        send_email_notification(ADMIN_EMAIL, "Admin", $email_subject, $email_body);
-    }
+    // Send Email Notification to Recipient — non-fatal
+    try {
+        if ($user['role'] === 'admin') {
+            // Admin sent message -> Email Client
+            $email_subject = "New Message on Order {$order['order_number']}";
+            $email_body    = "You received a new message from First Class Writers Hub regarding order {$order['order_number']} ('{$order['subject']}'):\n\n" .
+                             "\"{$message}\"\n\n" .
+                             "Log in to your portal dashboard to reply.";
+            send_email_notification($order['client_email'], $order['client_name'], $email_subject, $email_body);
+        } else {
+            // Client sent message -> Email Admin
+            $email_subject = "Client Message on Order {$order['order_number']}";
+            $email_body    = "Client {$user['name']} sent a message regarding order {$order['order_number']}:\n\n" .
+                             "\"{$message}\"\n\n" .
+                             "Check Admin Dashboard to reply.";
+            send_email_notification(ADMIN_EMAIL, "Admin", $email_subject, $email_body);
+        }
+    } catch (Exception $e) { /* silent */ }
 
     json_response([
         'success' => true,

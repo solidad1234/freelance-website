@@ -19,7 +19,9 @@ async function initAdmin() {
 
 async function checkAdminAuth() {
     try {
-        const res = await fetch('api/auth.php?action=check');
+        const res = await fetch('api/auth.php?action=check', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
         const data = await res.json();
 
         if (data.authenticated && data.user && data.user.role === 'admin') {
@@ -80,6 +82,7 @@ async function handleAdminLoginSubmit(e) {
 
         const res = await fetch('api/auth.php?action=login', {
             method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
 
@@ -102,13 +105,18 @@ async function handleAdminLoginSubmit(e) {
 }
 
 async function handleAdminLogout() {
-    await fetch('api/auth.php?action=logout', { method: 'POST' });
+    await fetch('api/auth.php?action=logout', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
     window.location.reload();
 }
 
 async function loadAdminOrders() {
     try {
-        const res = await fetch('api/orders.php?action=list');
+        const res = await fetch('api/orders.php?action=list', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
         const data = await res.json();
 
         if (data.success) {
@@ -232,18 +240,33 @@ function openOrderDetailsModal(orderId) {
     document.getElementById('modalOrderSubject').textContent = order.subject;
     document.getElementById('modalOrderInstructions').textContent = order.instructions;
 
-    const attachmentsContainer = document.getElementById('modalOrderAttachments');
-    if (order.attachments && order.attachments.length > 0) {
-        attachmentsContainer.innerHTML = order.attachments.map(att => {
-            const isSolution = att.original_name.startsWith('[SOLUTION]');
-            const pillStyle = isSolution 
-                ? 'background: #dcfce7; color: #15803d; border: 1px solid #86efac;'
-                : 'background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;';
-            const icon = isSolution ? 'fa-check-circle' : 'fa-download';
-            return `<a href="api/download.php?id=${att.id}" target="_blank" class="attachment-pill" style="padding: 8px 14px; font-size: 0.85rem; font-weight: 600; ${pillStyle} border-radius: 8px;"><i class="fas ${icon}"></i> ${escapeHtml(att.original_name)}</a>`;
+    // Split attachments: client uploads vs solution files
+    const submittedEl = document.getElementById('modalSubmittedFiles');
+    const solutionEl  = document.getElementById('modalSolutionFiles');
+
+    const attachments = order.attachments || [];
+    const clientFiles   = attachments.filter(a => !a.original_name.startsWith('[SOLUTION]'));
+    const solutionFiles = attachments.filter(a =>  a.original_name.startsWith('[SOLUTION]'));
+
+    if (clientFiles.length > 0) {
+        submittedEl.innerHTML = clientFiles.map(att =>
+            `<a href="api/download.php?id=${att.id}" target="_blank" style="display:inline-flex; align-items:center; gap:5px; font-size:0.82rem; color:#1d4ed8; text-decoration:none; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:4px 9px; font-weight:600; word-break:break-all;">
+                <i class="fas fa-file-download"></i> ${escapeHtml(att.original_name)}
+             </a>`
+        ).join('');
+    } else {
+        submittedEl.innerHTML = `<span style="font-size:0.82rem;color:#94a3b8;font-style:italic;">No files attached</span>`;
+    }
+
+    if (solutionFiles.length > 0) {
+        solutionEl.innerHTML = solutionFiles.map(att => {
+            const displayName = att.original_name.replace('[SOLUTION] ', '');
+            return `<a href="api/download.php?id=${att.id}" target="_blank" style="display:inline-flex; align-items:center; gap:5px; font-size:0.82rem; color:#15803d; text-decoration:none; background:#dcfce7; border:1px solid #86efac; border-radius:6px; padding:4px 9px; font-weight:600; word-break:break-all;">
+                <i class="fas fa-check-circle"></i> ${escapeHtml(displayName)}
+             </a>`;
         }).join('');
     } else {
-        attachmentsContainer.innerHTML = `<span style="font-size: 0.85rem; color: #94a3b8; font-style: italic;">No attachments uploaded for this order yet.</span>`;
+        solutionEl.innerHTML = `<span style="font-size:0.82rem;color:#94a3b8;font-style:italic;">No solution uploaded yet</span>`;
     }
 
     const openChatBtn = document.getElementById('modalOpenChatBtn');
@@ -277,6 +300,7 @@ async function handleModalDeliverWork(input) {
     try {
         const res = await fetch('api/orders.php?action=upload_submission', {
             method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
         const data = await res.json();
@@ -306,6 +330,7 @@ async function handleAdminDeliverWork(input) {
     try {
         const res = await fetch('api/orders.php?action=upload_submission', {
             method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
         const data = await res.json();
@@ -351,6 +376,7 @@ async function updateOrderStatus(orderId, newStatus) {
 
         const res = await fetch('api/orders.php?action=update_status', {
             method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
         const data = await res.json();
@@ -379,7 +405,7 @@ function openAdminChatDrawer(orderId, orderNumber, clientName) {
     if (!adminChatPollInterval) {
         adminChatPollInterval = setInterval(() => {
             if (activeAdminChatOrderId) loadAdminChatMessages(activeAdminChatOrderId);
-        }, 4000);
+        }, 6000);
     }
 }
 
@@ -395,7 +421,13 @@ function closeAdminChatDrawer() {
 
 async function loadAdminChatMessages(orderId) {
     try {
-        const res = await fetch(`api/orders.php?action=get_messages&order_id=${orderId}`);
+        const formData = new FormData();
+        formData.append('order_id', orderId);
+        const res = await fetch('api/orders.php?action=get_messages', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        });
         const text = await res.text();
         let data;
         try {
@@ -405,7 +437,7 @@ async function loadAdminChatMessages(orderId) {
             return;
         }
 
-        if (data.success) {
+        if (data && data.success) {
             renderAdminChatBubbles(data.messages);
         }
     } catch (err) {
@@ -469,6 +501,7 @@ async function handleSendAdminChatMessage() {
 
         const res = await fetch('api/orders.php?action=send_message', {
             method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
         const text = await res.text();
@@ -534,6 +567,7 @@ async function handleAdminChangePassSubmit(e) {
 
         const res = await fetch('api/auth.php?action=change_password', {
             method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
         const data = await res.json();
