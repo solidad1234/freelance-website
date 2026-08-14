@@ -3,8 +3,6 @@
 -- Compatible with MySQL / MariaDB (PHP 7.4+, 8.x)
 -- ===================================================
 
-CREATE DATABASE IF NOT EXISTS `writers_hub` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `writers_hub`;
 
 -- 1. Users Table
 CREATE TABLE IF NOT EXISTS `users` (
@@ -75,7 +73,7 @@ VALUES (
   'Admin', 
   'firstclasswritersk@gmail.com', 
   '+254746357646', 
-  '$2y$10$8u14YJ7s760GjI/262tEdeM15/r55W0M/zS/.m2z21W1V1V1V1V12', 
+  '$2y$10$Hs8yTjN4EA6aX2z9dAtPIeEc3H3N0YamFNwsDdzc2r/JsL1/IwuSy', 
   'admin'
 )
 ON DUPLICATE KEY UPDATE `id`=`id`;
