@@ -43,8 +43,23 @@ function get_db() {
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
         $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+
+        // Ensure default Admin user exists in MySQL
+        try {
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
+            $stmt->execute();
+            if (!$stmt->fetch()) {
+                $hash = password_hash('admin123', PASSWORD_DEFAULT);
+                $seed = $pdo->prepare("INSERT INTO users (name, email, phone, password_hash, role) VALUES (?, ?, ?, ?, 'admin')");
+                $seed->execute(['Admin', 'firstclasswritersk@gmail.com', '+254746357646', $hash]);
+            }
+        } catch (Exception $e) {
+            // Ignore if tables not imported yet
+        }
+
+        return $pdo;
     } catch (PDOException $e) {
-        // Fallback to local SQLite file database if MySQL is not configured/available
+        // Attempt SQLite fallback (for local development)
         try {
             $sqlite_file = __DIR__ . '/writers_hub.sqlite';
             $pdo = new PDO("sqlite:" . $sqlite_file);
@@ -108,13 +123,14 @@ function get_db() {
                 $hash = password_hash('admin123', PASSWORD_DEFAULT);
                 $seed = $pdo->prepare("INSERT INTO users (name, email, phone, password_hash, role) VALUES (?, ?, ?, ?, ?)");
                 $seed->execute(['Admin', 'firstclasswritersk@gmail.com', '+254746357646', $hash, 'admin']);
-            } else {
-                // Ensure email is updated to firstclasswritersk@gmail.com
-                $update_admin = $pdo->prepare("UPDATE users SET email = ? WHERE id = ?");
-                $update_admin->execute(['firstclasswritersk@gmail.com', $existing_admin['id']]);
             }
-        } catch (Exception $ex) {
-            json_response(['error' => 'Database connection error: ' . $ex->getMessage()], 500);
+
+            return $pdo;
+        } catch (Exception $sqliteErr) {
+            json_response([
+                'error' => 'Database connection failed. Please check MySQL credentials in config.php (Host, DB Name, User, Password). Details: ' . $e->getMessage()
+            ], 500);
+            exit();
         }
     }
 
