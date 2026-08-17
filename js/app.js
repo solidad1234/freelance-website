@@ -30,7 +30,14 @@ async function checkAuthSession() {
             updateUserNavUI();
             prefillOrderFormWithCurrentUser();
             if (currentUser.role === 'client') {
-                loadClientOrders();
+                const savedView = sessionStorage.getItem('activeView');
+                if (savedView === 'landing') {
+                    showLandingView();
+                } else if (savedView === 'form') {
+                    showFormView();
+                } else {
+                    showDashboardView();
+                }
             }
         } else {
             currentUser = null;
@@ -88,10 +95,28 @@ function updateUserNavUI() {
     }
 }
 
+function handleOrderNowClick(e) {
+    if (e) e.preventDefault();
+    if (currentUser) {
+        showFormView();
+    } else {
+        window.redirectAfterLogin = 'make_order';
+        openAuthModal('login');
+    }
+}
+window.handleOrderNowClick = handleOrderNowClick;
+
 /**
  * Event Listener Binding
  */
 function setupEventListeners() {
+    // Order Now buttons
+    document.querySelectorAll('#orderNowBtn, #heroOrderBtn, #aboutOrderBtn, .btn-showcase-cta').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            handleOrderNowClick(e);
+        });
+    });
+
     // Assignment Form Submit
     const assignmentForm = document.getElementById('assignmentForm');
     if (assignmentForm) {
@@ -266,6 +291,9 @@ async function handleLoginSubmit(e) {
             closeAuthModal();
             if (currentUser.role === 'admin') {
                 window.location.href = 'admin.html';
+            } else if (window.redirectAfterLogin === 'make_order') {
+                window.redirectAfterLogin = null;
+                showFormView();
             } else {
                 showDashboardView();
             }
@@ -441,7 +469,7 @@ function openClientChatDrawer(orderId, orderNumber, orderStatus) {
 
     const drawer = document.getElementById('clientChatDrawer');
     drawer.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('chat-drawer-open');
 
     // Render action buttons inside drawer
     const order = allClientOrders.find(o => o.id == orderId);
@@ -468,8 +496,8 @@ function openClientChatDrawer(orderId, orderNumber, orderStatus) {
 
 function closeClientChatDrawer() {
     const drawer = document.getElementById('clientChatDrawer');
-    drawer.style.display = 'none';
-    document.body.style.overflow = '';
+    if (drawer) drawer.style.display = 'none';
+    document.body.classList.remove('chat-drawer-open');
     if (chatPollInterval) {
         clearInterval(chatPollInterval);
         chatPollInterval = null;
@@ -508,12 +536,72 @@ async function loadChatMessages(orderId) {
     }
 }
 
+let activeClientModalOrderId = null;
+let stagedClientAttachments = [];
+
+function handleClientAttachmentSelected(input) {
+    if (!input.files || input.files.length === 0) return;
+    stagedClientAttachments = Array.from(input.files);
+
+    const preview = document.getElementById('clientAttachmentStagedPreview');
+    const listEl = document.getElementById('clientAttachmentStagedFileList');
+    if (preview && listEl) {
+        listEl.innerHTML = stagedClientAttachments.map(f =>
+            `<div><i class="fas fa-file"></i> <strong>${escapeHtml(f.name)}</strong> (${(f.size/1024).toFixed(1)} KB)</div>`
+        ).join('');
+        preview.style.display = 'block';
+    }
+}
+
+function clearClientStagedAttachments() {
+    stagedClientAttachments = [];
+    const input = document.getElementById('clientAddAttachmentInput');
+    if (input) input.value = '';
+    const preview = document.getElementById('clientAttachmentStagedPreview');
+    if (preview) preview.style.display = 'none';
+}
+
+async function confirmClientAddAttachment() {
+    if (!activeClientModalOrderId || stagedClientAttachments.length === 0) {
+        alert('Please select files to upload.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('order_id', activeClientModalOrderId);
+    stagedClientAttachments.forEach(file => {
+        formData.append('files[]', file);
+    });
+
+    try {
+        const res = await fetch('api/orders.php?action=upload_client_attachment', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            alert(`Success: ${stagedClientAttachments.length} file(s) attached to order!`);
+            clearClientStagedAttachments();
+            await loadClientOrders();
+            openClientOrderDetails(activeClientModalOrderId);
+        } else {
+            alert(data.error || 'Failed to upload attachments.');
+        }
+    } catch (err) {
+        console.error('Client upload attachment error:', err);
+        alert('Connection error occurred while uploading attachments.');
+    }
+}
+
 /**
  * Client Order Details Modal
  */
 function openClientOrderDetails(orderId) {
     const order = allClientOrders.find(o => o.id == orderId);
     if (!order) return;
+    activeClientModalOrderId = orderId;
 
     document.getElementById('clientModalOrderTitle').innerHTML = `<i class="fas fa-file-alt" style="color:#f7941e;"></i> Details for Order ${order.order_number}`;
     document.getElementById('clientModalOrderDate').textContent = `Submitted: ${order.created_at}`;
@@ -605,7 +693,7 @@ function renderChatBubbleList(messages) {
     messages.forEach(msg => {
         const isSelf = currentUser && (msg.sender_id == currentUser.id || (currentUser.role === 'client' && msg.sender_role === 'client'));
         const bubbleClass = isSelf ? 'msg-outgoing' : 'msg-incoming';
-        const senderLabel = isSelf ? 'You' : (msg.sender_role === 'admin' ? 'Support / Writer' : escapeHtml(msg.sender_name));
+        const senderLabel = isSelf ? 'You' : (msg.sender_role === 'admin' ? 'Support' : escapeHtml(msg.sender_name));
 
         let fileAttachmentHtml = '';
         if (msg.attachment_name) {
@@ -615,7 +703,7 @@ function renderChatBubbleList(messages) {
         html += `
             <div class="chat-bubble ${bubbleClass}">
                 <div class="bubble-meta">
-                    <strong>${senderLabel}</strong>
+                    <strong style="margin-right: 12px;">${senderLabel}</strong>
                     <small>${msg.created_at}</small>
                 </div>
                 <div class="bubble-text">${escapeHtml(msg.message)}</div>
@@ -680,6 +768,7 @@ function showDashboardView() {
         openAuthModal('login');
         return;
     }
+    sessionStorage.setItem('activeView', 'dashboard');
     const landingPage = document.getElementById('landingPage');
     const formPage = document.getElementById('formPage');
     const clientDashboard = document.getElementById('clientDashboard');
@@ -700,6 +789,7 @@ function showDashboardView() {
 }
 
 function showLandingView() {
+    sessionStorage.setItem('activeView', 'landing');
     const landingPage = document.getElementById('landingPage');
     const formPage = document.getElementById('formPage');
     const clientDashboard = document.getElementById('clientDashboard');
@@ -717,6 +807,7 @@ function showLandingView() {
 }
 
 function showFormView() {
+    sessionStorage.setItem('activeView', 'form');
     const landingPage = document.getElementById('landingPage');
     const formPage = document.getElementById('formPage');
     const clientDashboard = document.getElementById('clientDashboard');

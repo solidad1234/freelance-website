@@ -120,6 +120,13 @@ function get_db() {
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 );
             ");
+
+            // Auto-migrate any missing columns for existing SQLite database
+            try { $pdo->exec("ALTER TABLE users ADD COLUMN reset_code TEXT"); } catch (Exception $e) {}
+            try { $pdo->exec("ALTER TABLE users ADD COLUMN reset_expires DATETIME"); } catch (Exception $e) {}
+            try { $pdo->exec("ALTER TABLE users ADD COLUMN updated_at DATETIME"); } catch (Exception $e) {}
+            try { $pdo->exec("ALTER TABLE orders ADD COLUMN updated_at DATETIME"); } catch (Exception $e) {}
+            
             
             // Seed Admin in SQLite if missing
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? OR role = 'admin'");

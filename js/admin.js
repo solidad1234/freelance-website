@@ -289,43 +289,43 @@ function closeOrderDetailsModal() {
     document.body.style.overflow = 'auto';
 }
 
-async function handleModalDeliverWork(input) {
-    if (!activeModalOrderId || !input.files || input.files.length === 0) return;
-    const file = input.files[0];
+let stagedModalFiles = [];
+let stagedChatSolutionFiles = [];
+let selectedAdminFiles = [];
 
-    const formData = new FormData();
-    formData.append('order_id', activeModalOrderId);
-    formData.append('file', file);
-
-    try {
-        const res = await fetch('api/orders.php?action=upload_submission', {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body: formData
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            alert(`Success: Solution file '${file.name}' delivered to client!`);
-            input.value = '';
-            closeOrderDetailsModal();
-            loadAdminOrders();
-        } else {
-            alert(data.error || 'Failed to upload solution file.');
-        }
-    } catch (err) {
-        console.error('Deliver solution error:', err);
-        alert('Connection error occurred while uploading file.');
+function handleModalDeliverFileSelected(input) {
+    if (!input.files || input.files.length === 0) return;
+    stagedModalFiles = Array.from(input.files);
+    
+    const preview = document.getElementById('modalSolutionStagedPreview');
+    const listEl = document.getElementById('modalSolutionStagedFileList');
+    if (preview && listEl) {
+        listEl.innerHTML = stagedModalFiles.map(f => 
+            `<div><i class="fas fa-file-alt"></i> <strong>${escapeHtml(f.name)}</strong> (${(f.size/1024).toFixed(1)} KB)</div>`
+        ).join('');
+        preview.style.display = 'block';
     }
 }
 
-async function handleAdminDeliverWork(input) {
-    if (!activeAdminChatOrderId || !input.files || input.files.length === 0) return;
-    const file = input.files[0];
+function clearModalStagedFiles() {
+    stagedModalFiles = [];
+    const input = document.getElementById('modalDeliverWorkInput');
+    if (input) input.value = '';
+    const preview = document.getElementById('modalSolutionStagedPreview');
+    if (preview) preview.style.display = 'none';
+}
+
+async function confirmModalDeliverWork() {
+    if (!activeModalOrderId || stagedModalFiles.length === 0) {
+        alert('Please select files to upload.');
+        return;
+    }
 
     const formData = new FormData();
-    formData.append('order_id', activeAdminChatOrderId);
-    formData.append('file', file);
+    formData.append('order_id', activeModalOrderId);
+    stagedModalFiles.forEach(file => {
+        formData.append('files[]', file);
+    });
 
     try {
         const res = await fetch('api/orders.php?action=upload_submission', {
@@ -336,32 +336,89 @@ async function handleAdminDeliverWork(input) {
         const data = await res.json();
 
         if (data.success) {
-            alert(`Success: Completed work '${file.name}' delivered to client!`);
-            input.value = '';
-            loadAdminChatMessages(activeAdminChatOrderId);
+            alert(`Success: ${stagedModalFiles.length} file(s) delivered! Order is marked as Completed.`);
+            clearModalStagedFiles();
+            closeOrderDetailsModal();
             loadAdminOrders();
         } else {
-            alert(data.error || 'Failed to upload solution file.');
+            alert(data.error || 'Failed to upload solution files.');
         }
     } catch (err) {
         console.error('Deliver solution error:', err);
-        alert('Connection error occurred while uploading file.');
+        alert('Connection error occurred while uploading solution files.');
+    }
+}
+
+function handleAdminChatDeliverFileSelected(input) {
+    if (!input.files || input.files.length === 0) return;
+    stagedChatSolutionFiles = Array.from(input.files);
+
+    const preview = document.getElementById('adminChatStagedPreview');
+    const listEl = document.getElementById('adminChatStagedFileList');
+    if (preview && listEl) {
+        listEl.innerHTML = stagedChatSolutionFiles.map(f =>
+            `<div><i class="fas fa-file-alt"></i> <strong>${escapeHtml(f.name)}</strong> (${(f.size/1024).toFixed(1)} KB)</div>`
+        ).join('');
+        preview.style.display = 'block';
+    }
+}
+
+function clearAdminChatStagedFiles() {
+    stagedChatSolutionFiles = [];
+    const input = document.getElementById('adminDeliverWorkInput');
+    if (input) input.value = '';
+    const preview = document.getElementById('adminChatStagedPreview');
+    if (preview) preview.style.display = 'none';
+}
+
+async function confirmAdminChatDeliverWork() {
+    if (!activeAdminChatOrderId || stagedChatSolutionFiles.length === 0) {
+        alert('Please select files to upload.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('order_id', activeAdminChatOrderId);
+    stagedChatSolutionFiles.forEach(file => {
+        formData.append('files[]', file);
+    });
+
+    try {
+        const res = await fetch('api/orders.php?action=upload_submission', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            alert(`Success: ${stagedChatSolutionFiles.length} file(s) delivered! Order is marked as Completed.`);
+            clearAdminChatStagedFiles();
+            loadAdminChatMessages(activeAdminChatOrderId);
+            loadAdminOrders();
+        } else {
+            alert(data.error || 'Failed to upload solution files.');
+        }
+    } catch (err) {
+        console.error('Deliver solution error:', err);
+        alert('Connection error occurred while uploading solution files.');
     }
 }
 
 function handleAdminFileSelected(input) {
     if (input.files && input.files.length > 0) {
-        selectedAdminFile = input.files[0];
+        selectedAdminFiles = Array.from(input.files);
         const preview = document.getElementById('adminFilePreview');
         if (preview) {
-            preview.innerHTML = `<i class="fas fa-paperclip"></i> Attached: <strong>${escapeHtml(selectedAdminFile.name)}</strong> <button onclick="clearAdminSelectedFile()" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold; margin-left:8px;">&times;</button>`;
+            const names = selectedAdminFiles.map(f => escapeHtml(f.name)).join(', ');
+            preview.innerHTML = `<i class="fas fa-paperclip"></i> Attached (${selectedAdminFiles.length}): <strong>${names}</strong> <button onclick="clearAdminSelectedFile()" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold; margin-left:8px;">&times;</button>`;
             preview.style.display = 'block';
         }
     }
 }
 
 function clearAdminSelectedFile() {
-    selectedAdminFile = null;
+    selectedAdminFiles = [];
     const input = document.getElementById('adminChatAttachment');
     if (input) input.value = '';
     const preview = document.getElementById('adminFilePreview');
@@ -399,6 +456,7 @@ function openAdminChatDrawer(orderId, orderNumber, clientName) {
     document.getElementById('drawerOrderTitle').textContent = `Order ${orderNumber}`;
     document.getElementById('drawerClientTitle').textContent = `Client: ${clientName}`;
     document.getElementById('adminChatDrawer').classList.add('show');
+    document.body.classList.add('chat-drawer-open');
 
     loadAdminChatMessages(orderId);
 
@@ -413,6 +471,7 @@ function closeAdminChatDrawer() {
     activeAdminChatOrderId = null;
     clearAdminSelectedFile();
     document.getElementById('adminChatDrawer').classList.remove('show');
+    document.body.classList.remove('chat-drawer-open');
     if (adminChatPollInterval) {
         clearInterval(adminChatPollInterval);
         adminChatPollInterval = null;
@@ -468,7 +527,7 @@ function renderAdminChatBubbles(messages) {
         html += `
             <div class="chat-bubble ${bubbleClass}">
                 <div class="bubble-meta">
-                    <strong>${senderLabel}</strong>
+                    <strong style="margin-right: 12px;">${senderLabel}</strong>
                     <small>${msg.created_at}</small>
                 </div>
                 <div class="bubble-text">${escapeHtml(msg.message)}</div>
@@ -486,14 +545,15 @@ async function handleSendAdminChatMessage() {
 
     const input = document.getElementById('adminChatInput');
     const message = input.value.trim();
-    if (!message && !selectedAdminFile) return;
+    if (!message && (!selectedAdminFiles || selectedAdminFiles.length === 0)) return;
 
     try {
         const formData = new FormData();
         formData.append('order_id', activeAdminChatOrderId);
         formData.append('message', message);
-        if (selectedAdminFile) {
-            formData.append('attachment', selectedAdminFile);
+        if (selectedAdminFiles && selectedAdminFiles.length > 0) {
+            formData.append('attachment', selectedAdminFiles[0]);
+            selectedAdminFiles.forEach(f => formData.append('attachments[]', f));
         }
 
         input.value = '';

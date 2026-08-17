@@ -338,17 +338,27 @@
       </div>
       <button class="close-auth-modal" style="color: white; background: rgba(255,255,255,0.2);" onclick="closeAdminChatDrawer()">&times;</button>
     </div>
-    <div style="background: #f1f5f9; padding: 8px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-      <span style="font-size: 0.8rem; color: #475569; font-weight: 600;"><i class="fas fa-file-upload"></i> Deliver Solution:</span>
-      <button onclick="document.getElementById('adminDeliverWorkInput').click()" style="padding: 5px 12px; font-size: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"><i class="fas fa-cloud-upload-alt"></i> Upload Completed Paper</button>
-      <input type="file" id="adminDeliverWorkInput" style="display:none;" onchange="handleAdminDeliverWork(this)">
+    <div style="background: #f1f5f9; padding: 8px 16px; border-bottom: 1px solid #e2e8f0;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: #475569; font-weight: 600;"><i class="fas fa-file-upload"></i> Deliver Solution:</span>
+        <button onclick="document.getElementById('adminDeliverWorkInput').click()" style="padding: 5px 12px; font-size: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"><i class="fas fa-cloud-upload-alt"></i> Select Files</button>
+        <input type="file" id="adminDeliverWorkInput" multiple style="display:none;" onchange="handleAdminChatDeliverFileSelected(this)">
+      </div>
+      <div id="adminChatStagedPreview" style="display:none; margin-top: 8px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 8px 12px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: #15803d; margin-bottom: 4px;"><i class="fas fa-check-circle"></i> Files ready to upload & mark completed:</div>
+        <div id="adminChatStagedFileList" style="display: flex; flex-direction: column; gap: 3px; font-size: 0.78rem; color: #334155; margin-bottom: 6px;"></div>
+        <div style="display: flex; gap: 6px; justify-content: flex-end;">
+          <button onclick="clearAdminChatStagedFiles()" style="padding: 3px 8px; font-size: 0.75rem; background: #94a3b8; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+          <button onclick="confirmAdminChatDeliverWork()" style="padding: 3px 10px; font-size: 0.75rem; background: #059669; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 700;"><i class="fas fa-paper-plane"></i> Confirm & Submit</button>
+        </div>
+      </div>
     </div>
     <div class="chat-drawer-body" id="adminChatMessages">
       <!-- Chat bubbles -->
     </div>
     <div id="adminFilePreview" style="display:none; padding: 6px 14px; background: #eff6ff; font-size: 0.8rem; color: #1d4ed8; border-top: 1px solid #bfdbfe; font-weight: 600;"></div>
     <div class="chat-drawer-footer">
-      <input type="file" id="adminChatAttachment" style="display:none;" onchange="handleAdminFileSelected(this)">
+      <input type="file" id="adminChatAttachment" multiple style="display:none;" onchange="handleAdminFileSelected(this)">
       <button type="button" onclick="document.getElementById('adminChatAttachment').click()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; border-radius: 8px; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Attach file"><i class="fas fa-paperclip"></i></button>
       <textarea id="adminChatInput" placeholder="Type a message to reply to client..." rows="1" style="flex:1; padding: 10px; border-radius: 10px; border: 1px solid var(--border-color); outline: none;"></textarea>
       <button class="btn-chat-open" id="adminSendChatBtn"><i class="fas fa-paper-plane"></i> Send</button>
@@ -398,8 +408,16 @@
         <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Files</label>
-            <button onclick="document.getElementById('modalDeliverWorkInput').click()" style="padding: 4px 10px; font-size: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"><i class="fas fa-cloud-upload-alt"></i> Upload Solution File</button>
-            <input type="file" id="modalDeliverWorkInput" style="display:none;" onchange="handleModalDeliverWork(this)">
+            <button onclick="document.getElementById('modalDeliverWorkInput').click()" style="padding: 4px 10px; font-size: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"><i class="fas fa-cloud-upload-alt"></i> Select Files</button>
+            <input type="file" id="modalDeliverWorkInput" multiple style="display:none;" onchange="handleModalDeliverFileSelected(this)">
+          </div>
+          <div id="modalSolutionStagedPreview" style="display:none; margin-bottom: 12px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 10px 14px;">
+            <div style="font-size: 0.82rem; font-weight: 700; color: #15803d; margin-bottom: 6px;"><i class="fas fa-check-double"></i> Files Selected to Deliver:</div>
+            <div id="modalSolutionStagedFileList" style="display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; color: #334155; margin-bottom: 8px;"></div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+              <button onclick="clearModalStagedFiles()" style="padding: 4px 10px; font-size: 0.75rem; background: #94a3b8; color: white; border: none; border-radius: 6px; cursor: pointer;">Cancel</button>
+              <button onclick="confirmModalDeliverWork()" style="padding: 4px 12px; font-size: 0.75rem; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700;"><i class="fas fa-paper-plane"></i> Confirm & Submit</button>
+            </div>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
             <!-- Submitted Files (client uploads) -->
@@ -414,7 +432,7 @@
             <!-- Delivered Files (solution uploads) -->
             <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 12px;">
               <div style="font-size: 0.78rem; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                <i class="fas fa-check-circle" style="color: #22c55e;"></i> Uploaded Files
+                <i class="fas fa-check-circle" style="color: #22c55e;"></i> Files
               </div>
               <div id="modalSolutionFiles" style="display: flex; flex-direction: column; gap: 5px; min-height: 32px;">
                 <span style="font-size: 0.82rem; color: #94a3b8; font-style: italic;">No solution uploaded yet</span>

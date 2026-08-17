@@ -24,6 +24,9 @@ switch ($action) {
     case 'upload_submission':
         handle_upload_submission();
         break;
+    case 'upload_client_attachment':
+        handle_upload_client_attachment();
+        break;
     case 'get_messages':
         handle_get_messages();
         break;
@@ -303,14 +306,45 @@ function handle_update_status() {
 function handle_upload_submission() {
     $user = require_admin();
     $raw_order_id = $_POST['order_id'] ?? 0;
-    $mark_completed = isset($_POST['mark_completed']) ? filter_var($_POST['mark_completed'], FILTER_VALIDATE_BOOLEAN) : true;
 
     if (empty($raw_order_id)) {
         json_response(['error' => 'Invalid order ID.'], 400);
     }
 
-    if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-        json_response(['error' => 'Please select a valid file to upload.'], 400);
+    // Collect files from $_FILES['files'] or $_FILES['file']
+    $files_to_process = [];
+    if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
+        for ($i = 0; $i < count($_FILES['files']['name']); $i++) {
+            if ($_FILES['files']['error'][$i] === UPLOAD_ERR_OK) {
+                $files_to_process[] = [
+                    'name' => $_FILES['files']['name'][$i],
+                    'tmp_name' => $_FILES['files']['tmp_name'][$i],
+                    'size' => $_FILES['files']['size'][$i]
+                ];
+            }
+        }
+    } elseif (isset($_FILES['file'])) {
+        if (is_array($_FILES['file']['name'])) {
+            for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
+                if ($_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
+                    $files_to_process[] = [
+                        'name' => $_FILES['file']['name'][$i],
+                        'tmp_name' => $_FILES['file']['tmp_name'][$i],
+                        'size' => $_FILES['file']['size'][$i]
+                    ];
+                }
+            }
+        } elseif ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
+            $files_to_process[] = [
+                'name' => $_FILES['file']['name'],
+                'tmp_name' => $_FILES['file']['tmp_name'],
+                'size' => $_FILES['file']['size']
+            ];
+        }
+    }
+
+    if (empty($files_to_process)) {
+        json_response(['error' => 'Please select at least one valid file to upload.'], 400);
     }
 
     $db = get_db();
@@ -323,55 +357,62 @@ function handle_upload_submission() {
     }
 
     $real_order_id = $order['id'];
-    $orig_name = basename($_FILES['file']['name']);
-    $file_size = $_FILES['file']['size'];
-    $tmp_path  = $_FILES['file']['tmp_name'];
-    $ext       = strtolower(pathinfo($orig_name, PATHINFO_EXTENSION));
-
     $allowed_extensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip', 'png', 'jpg', 'jpeg', 'ppt', 'pptx'];
-    if (!in_array($ext, $allowed_extensions) || $file_size > MAX_FILE_SIZE) {
-        json_response(['error' => 'Invalid file format or file size exceeds maximum limit (25MB).'], 400);
+    $uploaded_names = [];
+
+    foreach ($files_to_process as $file_info) {
+        $orig_name = basename($file_info['name']);
+        $file_size = $file_info['size'];
+        $tmp_path  = $file_info['tmp_name'];
+        $ext       = strtolower(pathinfo($orig_name, PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed_extensions) || $file_size > MAX_FILE_SIZE) {
+            continue; // Skip invalid or oversized files
+        }
+
+        $stored_name = 'solution_' . $real_order_id . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+        $dest_path   = UPLOAD_DIR . $stored_name;
+
+        if (move_uploaded_file($tmp_path, $dest_path)) {
+            $mime_type = mime_content_type($dest_path) ?: 'application/octet-stream';
+            $stmt_file = $db->prepare("INSERT INTO order_attachments (order_id, uploaded_by_user_id, original_name, stored_name, file_size, mime_type) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt_file->execute([$real_order_id, $user['id'], "[SOLUTION] " . $orig_name, $stored_name, $file_size, $mime_type]);
+            $uploaded_names[] = $orig_name;
+        }
     }
 
-    $stored_name = 'solution_' . $real_order_id . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-    $dest_path   = UPLOAD_DIR . $stored_name;
-
-    if (!move_uploaded_file($tmp_path, $dest_path)) {
-        json_response(['error' => 'Failed to save uploaded file on server.'], 500);
+    if (empty($uploaded_names)) {
+        json_response(['error' => 'Failed to upload selected files. Please check file format and size limit (25MB).'], 400);
     }
 
-    $mime_type = mime_content_type($dest_path) ?: 'application/octet-stream';
-    $stmt_file = $db->prepare("INSERT INTO order_attachments (order_id, uploaded_by_user_id, original_name, stored_name, file_size, mime_type) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt_file->execute([$real_order_id, $user['id'], "[SOLUTION] " . $orig_name, $stored_name, $file_size, $mime_type]);
-    $attachment_id = $db->lastInsertId();
-
-    // If status is Pending, update status to In Progress
-    $new_status = $order['status'];
-    if ($order['status'] === 'Pending') {
-        $new_status = 'In Progress';
-        $stmt_update = $db->prepare("UPDATE orders SET status = 'In Progress', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+    // Mark order as Completed upon uploading solution files by admin
+    $new_status = 'Completed';
+    try {
+        $stmt_update = $db->prepare("UPDATE orders SET status = 'Completed', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        $stmt_update->execute([$real_order_id]);
+    } catch (Exception $e) {
+        $stmt_update = $db->prepare("UPDATE orders SET status = 'Completed' WHERE id = ?");
         $stmt_update->execute([$real_order_id]);
     }
 
     // Insert Chat notification message
-    $msg_text = "📄 **Solution / Deliverable Uploaded!**\nFile: `{$orig_name}`\nAdmin has uploaded your assignment file. Please download and review the work. Once you are satisfied, click 'Mark as Completed' on your dashboard.";
+    $file_list_str = implode(', ', $uploaded_names);
+    $msg_text = "📄 **Solution / Deliverable Uploaded!**\nFiles: `{$file_list_str}`\nAdmin has uploaded solution file(s) for your assignment. The order status is now marked as Completed. You can download your files and continue chatting if you need any follow-up!";
     $stmt_msg = $db->prepare("INSERT INTO chat_messages (order_id, sender_id, sender_role, message, attachment_name) VALUES (?, ?, 'admin', ?, ?)");
-    $stmt_msg->execute([$real_order_id, $user['id'], $msg_text, $orig_name]);
+    $stmt_msg->execute([$real_order_id, $user['id'], $msg_text, $uploaded_names[0]]);
 
     // Send Email to Client — non-fatal
     try {
         $email_subject = "Completed Work Uploaded - Order {$order['order_number']}";
-        $email_body    = "Hello {$order['client_name']},\n\nGreat news! The solution file for your order {$order['order_number']} ('{$order['subject']}') has been uploaded by our admin team.\n\nFile Name: {$orig_name}\n\nPlease log in to your portal dashboard to download and review your file. Once you are satisfied, you can mark the order as completed:\nhttp://firstclasswritershub.free.nf/\n\nThank you for choosing First Class Writers Hub!";
+        $email_body    = "Hello {$order['client_name']},\n\nGreat news! The solution file(s) for your order {$order['order_number']} ('{$order['subject']}') have been uploaded by our admin team.\n\nUploaded Files: {$file_list_str}\n\nYour order is now marked as Completed. Please log in to your portal dashboard to download your files:\nhttp://firstclasswritershub.free.nf/\n\nThank you for choosing First Class Writers Hub!";
         send_email_notification($order['client_email'], $order['client_name'], $email_subject, $email_body);
     } catch (Exception $e) { /* silent */ }
 
     json_response([
         'success' => true,
-        'message' => "Completed work '{$orig_name}' uploaded successfully!",
-        'attachment_id' => $attachment_id,
-        'stored_name' => $stored_name,
-        'original_name' => "[SOLUTION] " . $orig_name,
-        'new_status' => $new_status
+        'message' => count($uploaded_names) . " file(s) uploaded successfully! Order marked as Completed.",
+        'uploaded_files' => $uploaded_names,
+        'new_status' => 'Completed'
     ]);
 }
 
@@ -520,5 +561,114 @@ function handle_send_message() {
             'attachment_name' => $attachment_name,
             'created_at' => date('Y-m-d H:i:s')
         ]
+    ]);
+}
+
+function handle_upload_client_attachment() {
+    $user = require_login();
+    $raw_order_id = $_POST['order_id'] ?? 0;
+
+    if (empty($raw_order_id)) {
+        json_response(['error' => 'Invalid order ID.'], 400);
+    }
+
+    $db = get_db();
+    $stmt = $db->prepare("SELECT o.*, u.name as client_name, u.email as client_email FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = ? OR o.order_number = ?");
+    $stmt->execute([(int)$raw_order_id, (string)$raw_order_id]);
+    $order = $stmt->fetch();
+
+    if (!$order) {
+        json_response(['error' => 'Order not found.'], 404);
+    }
+
+    if ($user['role'] !== 'admin' && $order['user_id'] != $user['id']) {
+        json_response(['error' => 'Access denied.'], 403);
+    }
+
+    $real_order_id = $order['id'];
+
+    // Collect files
+    $files_to_process = [];
+    if (isset($_FILES['files']) && is_array($_FILES['files']['name'])) {
+        for ($i = 0; $i < count($_FILES['files']['name']); $i++) {
+            if ($_FILES['files']['error'][$i] === UPLOAD_ERR_OK) {
+                $files_to_process[] = [
+                    'name' => $_FILES['files']['name'][$i],
+                    'tmp_name' => $_FILES['files']['tmp_name'][$i],
+                    'size' => $_FILES['files']['size'][$i]
+                ];
+            }
+        }
+    } elseif (isset($_FILES['file'])) {
+        if (is_array($_FILES['file']['name'])) {
+            for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
+                if ($_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
+                    $files_to_process[] = [
+                        'name' => $_FILES['file']['name'][$i],
+                        'tmp_name' => $_FILES['file']['tmp_name'][$i],
+                        'size' => $_FILES['file']['size'][$i]
+                    ];
+                }
+            }
+        } elseif ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
+            $files_to_process[] = [
+                'name' => $_FILES['file']['name'],
+                'tmp_name' => $_FILES['file']['tmp_name'],
+                'size' => $_FILES['file']['size']
+            ];
+        }
+    }
+
+    if (empty($files_to_process)) {
+        json_response(['error' => 'Please select at least one valid file to upload.'], 400);
+    }
+
+    $allowed_extensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip', 'png', 'jpg', 'jpeg', 'ppt', 'pptx'];
+    $uploaded_names = [];
+
+    foreach ($files_to_process as $file_info) {
+        $orig_name = basename($file_info['name']);
+        $file_size = $file_info['size'];
+        $tmp_path  = $file_info['tmp_name'];
+        $ext       = strtolower(pathinfo($orig_name, PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed_extensions) || $file_size > MAX_FILE_SIZE) {
+            continue;
+        }
+
+        $stored_name = 'att_' . $real_order_id . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+        $dest_path   = UPLOAD_DIR . $stored_name;
+
+        if (move_uploaded_file($tmp_path, $dest_path)) {
+            $mime_type = mime_content_type($dest_path) ?: 'application/octet-stream';
+            $stmt_file = $db->prepare("INSERT INTO order_attachments (order_id, uploaded_by_user_id, original_name, stored_name, file_size, mime_type) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt_file->execute([$real_order_id, $user['id'], $orig_name, $stored_name, $file_size, $mime_type]);
+            $uploaded_names[] = $orig_name;
+        }
+    }
+
+    if (empty($uploaded_names)) {
+        json_response(['error' => 'Failed to upload selected files. Please check file format and size limit (25MB).'], 400);
+    }
+
+    // Insert Chat notification message
+    $file_list_str = implode(', ', $uploaded_names);
+    $msg_text = "📎 **Client attached additional file(s):** `{$file_list_str}`";
+    $stmt_msg = $db->prepare("INSERT INTO chat_messages (order_id, sender_id, sender_role, message, attachment_name) VALUES (?, ?, ?, ?, ?)");
+    $stmt_msg->execute([$real_order_id, $user['id'], $user['role'], $msg_text, $uploaded_names[0]]);
+
+    // Send Email to Admin — non-fatal
+    try {
+        $email_subject = "New Attachment on Order {$order['order_number']}";
+        $email_body    = "Client {$user['name']} has uploaded additional file(s) for order {$order['order_number']} ('{$order['subject']}'):\n\n" .
+                         "Files: {$file_list_str}\n\n" .
+                         "Check Admin Dashboard to view.";
+        send_email_notification(ADMIN_EMAIL, "Admin", $email_subject, $email_body);
+    } catch (Exception $e) { /* silent */ }
+
+    json_response([
+        'success' => true,
+        'message' => count($uploaded_names) . " attachment(s) uploaded successfully!",
+        'uploaded_files' => $uploaded_names
     ]);
 }
