@@ -828,7 +828,7 @@
     .form-page.active { display: block; }
 
     .form-page .form-container {
-      max-width: 850px;
+      max-width: 1300px;
       margin: 0 auto;
       background: white;
       border-radius: 24px;
@@ -2379,6 +2379,55 @@
           <input type="text" id="subject" placeholder="e.g. Marketing Strategy Essay" required>
         </div>
 
+        <!-- Pricing & Service Selection -->
+        <div class="field-group pricing-section" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 14px; margin-bottom: 1.25rem;">
+          <label style="font-size: 0.95rem; font-weight: 700; color: #003b6f; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-tags" style="color: #f7941e;"></i> CHOOSE SERVICE & PRICING <span class="required">*</span>
+          </label>
+          
+          <div class="pricing-options-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+            <!-- Option 1: Rewriting ($4/pg) -->
+            <div class="pricing-card active" id="pricingCardRewriting" onclick="selectPricingOption('Rewriting', 4)" style="border: 2px solid #f7941e; background: #fff8f0; border-radius: 12px; padding: 1rem; cursor: pointer; transition: 0.2s; position: relative;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-weight: 700; color: #003b6f; font-size: 0.95rem;"><i class="fas fa-sync-alt" style="color: #f7941e; margin-right: 6px;"></i> Rewriting</span>
+                <span style="font-size: 1.2rem; font-weight: 800; color: #f7941e;">$4 <small style="font-size:0.75rem; font-weight:600; color:#64748b;">/ page</small></span>
+              </div>
+              <p style="font-size: 0.8rem; color: #64748b; margin: 0;">Paraphrasing, editing & rewriting existing content.</p>
+            </div>
+
+            <!-- Option 2: Writing & Others ($5/pg) -->
+            <div class="pricing-card" id="pricingCardWriting" onclick="selectPricingOption('Writing / Other', 5)" style="border: 2px solid #cbd5e1; background: white; border-radius: 12px; padding: 1rem; cursor: pointer; transition: 0.2s; position: relative;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-weight: 700; color: #003b6f; font-size: 0.95rem;"><i class="fas fa-pen-fancy" style="color: #003b6f; margin-right: 6px;"></i> Writing & Others</span>
+                <span style="font-size: 1.2rem; font-weight: 800; color: #003b6f;">$5 <small style="font-size:0.75rem; font-weight:600; color:#64748b;">/ page</small></span>
+              </div>
+              <p style="font-size: 0.8rem; color: #64748b; margin: 0;">Original essay, research paper & all other writing services.</p>
+            </div>
+          </div>
+
+          <!-- Hidden inputs for pricing state -->
+          <input type="hidden" id="serviceType" name="service_type" value="Rewriting">
+          <input type="hidden" id="pricePerPage" name="price_per_page" value="4">
+
+          <!-- Page Count & Total Calculation -->
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; background: white; padding: 0.85rem 1.2rem; border-radius: 10px; border: 1px solid #cbd5e1;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <label for="pageCount" style="font-weight: 700; font-size: 0.88rem; color: #1e293b; margin: 0;"><i class="fas fa-file-alt" style="color: #003b6f;"></i> Number of Pages:</label>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <button type="button" onclick="changePageCount(-1)" style="width: 32px; height: 32px; border: 1px solid #cbd5e1; background: #f1f5f9; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; color: #003b6f;">-</button>
+                <input type="number" id="pageCount" value="1" min="1" max="500" onchange="calculateOrderTotal()" onkeyup="calculateOrderTotal()" style="width: 60px; text-align: center; font-weight: 700; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;">
+                <button type="button" onclick="changePageCount(1)" style="width: 32px; height: 32px; border: 1px solid #cbd5e1; background: #f1f5f9; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; color: #003b6f;">+</button>
+              </div>
+              <small id="wordCountEstimate" style="color: #64748b; font-size: 0.8rem; margin-left: 4px;">(~275 words)</small>
+            </div>
+
+            <div style="text-align: right;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; display: block;">Total Estimated Cost</span>
+              <span id="displayTotalCost" style="font-size: 1.4rem; font-weight: 800; color: #2563eb;">$4.00 <small style="font-size:0.75rem; font-weight:600; color:#64748b;">USD</small></span>
+            </div>
+          </div>
+        </div>
+
         <div class="field-group">
           <label><i class="fas fa-align-left"></i> MESSAGE / REQUIREMENTS <span class="required">*</span></label>
           <textarea id="instructions" placeholder="Describe your assignment requirements, word count, referencing style, etc." required></textarea>
@@ -2494,6 +2543,18 @@
         <div id="clientModalSubject" style="font-size:1rem; font-weight:700; color:#003b6f;"></div>
       </div>
       <span id="clientModalStatusBadge" class="status-badge"></span>
+    </div>
+
+    <!-- Service & Cost Summary -->
+    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:1rem; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <div>
+        <div style="font-size:0.75rem; font-weight:700; color:#1d4ed8; text-transform:uppercase;">Service & Pricing</div>
+        <div id="clientModalPricingInfo" style="font-weight:700; color:#003b6f; font-size:0.95rem; margin-top:2px;"></div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.75rem; font-weight:700; color:#1d4ed8; text-transform:uppercase;">Total Price</div>
+        <div id="clientModalTotalPrice" style="font-weight:800; color:#2563eb; font-size:1.3rem;"></div>
+      </div>
     </div>
 
     <!-- Instructions -->

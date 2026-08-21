@@ -145,6 +145,7 @@ function filterAdminOrders() {
             o.order_number.toLowerCase().includes(query) ||
             o.client_name.toLowerCase().includes(query) ||
             o.client_email.toLowerCase().includes(query) ||
+            (o.service_type && o.service_type.toLowerCase().includes(query)) ||
             o.subject.toLowerCase().includes(query);
 
         const matchesStatus = (statusFilter === 'ALL' || o.status === statusFilter);
@@ -160,7 +161,7 @@ function renderAdminOrdersTable(orders) {
     if (!tbody) return;
 
     if (!orders || orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #64748b;">No matching orders found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #64748b;">No matching orders found.</td></tr>`;
         return;
     }
 
@@ -177,6 +178,11 @@ function renderAdminOrdersTable(orders) {
 
         const unreadBadge = order.unread_messages > 0 ? `<span class="status-badge status-pending" style="font-size:0.7rem; padding: 2px 6px;">${order.unread_messages} unread</span>` : '';
 
+        const totalPrice = parseFloat(order.total_price || 0).toFixed(2);
+        const serviceType = escapeHtml(order.service_type || 'Writing / Other');
+        const pricePerPage = parseFloat(order.price_per_page || 5).toFixed(2);
+        const pages = order.pages || 1;
+
         html += `
             <tr>
                 <td><strong>${order.order_number}</strong><br><small style="color:#64748b;">${order.created_at}</small></td>
@@ -187,7 +193,12 @@ function renderAdminOrdersTable(orders) {
                 </td>
                 <td><strong>${escapeHtml(order.subject)}</strong></td>
                 <td>
-                    <div style="font-size: 0.85rem; color: #334155; max-width: 220px; line-height: 1.4;">
+                    <strong style="color: #2563eb; font-size: 0.95rem;">$${totalPrice}</strong><br>
+                    <small style="color: #003b6f; font-weight: 600;"><i class="fas fa-tag" style="color: #f7941e;"></i> ${serviceType}</small><br>
+                    <small style="color: #64748b;">${pages} pg${pages > 1 ? 's' : ''} @ $${pricePerPage}/pg</small>
+                </td>
+                <td>
+                    <div style="font-size: 0.85rem; color: #334155; max-width: 200px; line-height: 1.4;">
                         ${truncatedInstructions}
                     </div>
                 </td>
@@ -232,6 +243,26 @@ function openOrderDetailsModal(orderId) {
     document.getElementById('modalClientName').textContent = order.client_name;
     document.getElementById('modalClientEmail').innerHTML = `<i class="fas fa-envelope"></i> ${escapeHtml(order.client_email)}`;
     document.getElementById('modalClientPhone').innerHTML = `<i class="fas fa-phone"></i> ${escapeHtml(order.client_phone || 'N/A')}`;
+
+    const serviceTierEl = document.getElementById('modalOrderServiceTier');
+    if (serviceTierEl) {
+        const sType = order.service_type || 'Writing / Other';
+        const pRate = parseFloat(order.price_per_page || 5).toFixed(2);
+        serviceTierEl.innerHTML = `<i class="fas fa-tag" style="color: var(--primary-orange);"></i> ${escapeHtml(sType)} ($${pRate} / page)`;
+    }
+
+    const pagesEl = document.getElementById('modalOrderPagesCount');
+    if (pagesEl) {
+        const pNum = order.pages || 1;
+        const words = pNum * 275;
+        pagesEl.innerHTML = `<i class="fas fa-file"></i> ${pNum} Page${pNum > 1 ? 's' : ''} (~${words.toLocaleString()} words)`;
+    }
+
+    const totalEl = document.getElementById('modalOrderTotalPrice');
+    if (totalEl) {
+        const tPrice = parseFloat(order.total_price || 0).toFixed(2);
+        totalEl.innerHTML = `$${tPrice} <small style="font-size:0.75rem; font-weight:600; color:#64748b;">USD</small>`;
+    }
 
     const statusBadge = document.getElementById('modalOrderStatusBadge');
     statusBadge.className = `status-badge status-${order.status.toLowerCase().replace(' ', '-')}`;

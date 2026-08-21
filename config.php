@@ -126,6 +126,10 @@ function get_db() {
             try { $pdo->exec("ALTER TABLE users ADD COLUMN reset_expires DATETIME"); } catch (Exception $e) {}
             try { $pdo->exec("ALTER TABLE users ADD COLUMN updated_at DATETIME"); } catch (Exception $e) {}
             try { $pdo->exec("ALTER TABLE orders ADD COLUMN updated_at DATETIME"); } catch (Exception $e) {}
+            try { $pdo->exec("ALTER TABLE orders ADD COLUMN service_type TEXT DEFAULT 'Writing / Other'"); } catch (Exception $e) {}
+            try { $pdo->exec("ALTER TABLE orders ADD COLUMN price_per_page REAL DEFAULT 5.00"); } catch (Exception $e) {}
+            try { $pdo->exec("ALTER TABLE orders ADD COLUMN pages INTEGER DEFAULT 1"); } catch (Exception $e) {}
+            try { $pdo->exec("ALTER TABLE orders ADD COLUMN total_price REAL DEFAULT 5.00"); } catch (Exception $e) {}
             
             
             // Seed Admin in SQLite if missing

@@ -199,12 +199,19 @@ async function handleOrderSubmit(e) {
         phone = countryCode + ' ' + phoneInput;
     }
 
+    const serviceType = document.getElementById('serviceType')?.value || 'Rewriting';
+    const pricePerPage = document.getElementById('pricePerPage')?.value || '4';
+    const pageCount = document.getElementById('pageCount')?.value || '1';
+
     const formData = new FormData();
     formData.append('clientName', clientName);
     formData.append('email', email);
     formData.append('phone', phone);
     formData.append('subject', subject);
     formData.append('instructions', instructions);
+    formData.append('service_type', serviceType);
+    formData.append('price_per_page', pricePerPage);
+    formData.append('pages', pageCount);
 
     if (fileInput && fileInput.files.length > 0) {
         for (let i = 0; i < fileInput.files.length; i++) {
@@ -427,14 +434,20 @@ function renderOrdersList(orders) {
             ? escapeHtml(order.instructions.substring(0, 80)) + '...'
             : escapeHtml(order.instructions);
 
+        const totalPrice = parseFloat(order.total_price || 0).toFixed(2);
+        const serviceType = escapeHtml(order.service_type || 'Writing / Other');
+        const pages = order.pages || 1;
+
         html += `
             <tr style="border-bottom:1px solid #e2e8f0;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
                 <td style="padding:14px 16px; font-size:0.9rem; vertical-align:middle;">
                     <strong style="color:#003b6f;">${order.order_number}</strong><br>
-                    <small style="color:#64748b;">${order.created_at}</small>
+                    <small style="color:#64748b;">${order.created_at}</small><br>
+                    <span style="font-weight:800; color:#2563eb; font-size:0.85rem;">$${totalPrice} USD</span>
                 </td>
                 <td style="padding:14px 16px; font-size:0.9rem; vertical-align:middle;">
-                    <strong style="color:#1e293b;">${escapeHtml(order.subject)}</strong>
+                    <strong style="color:#1e293b;">${escapeHtml(order.subject)}</strong><br>
+                    <small style="color:#64748b; font-weight:600;"><i class="fas fa-tag" style="color:#f7941e;"></i> ${serviceType} (${pages} pg${pages > 1 ? 's' : ''})</small>
                 </td>
                 <td style="padding:14px 16px; font-size:0.88rem; color:#334155; vertical-align:middle; max-width:200px;">
                     ${truncatedInstructions}
@@ -607,6 +620,20 @@ function openClientOrderDetails(orderId) {
     document.getElementById('clientModalOrderDate').textContent = `Submitted: ${order.created_at}`;
     document.getElementById('clientModalSubject').textContent = order.subject;
     document.getElementById('clientModalInstructions').textContent = order.instructions;
+
+    const infoEl = document.getElementById('clientModalPricingInfo');
+    if (infoEl) {
+        const sType = order.service_type || 'Writing / Other';
+        const pRate = parseFloat(order.price_per_page || 5).toFixed(2);
+        const pNum = order.pages || 1;
+        infoEl.innerHTML = `<i class="fas fa-tags" style="color:#f7941e;"></i> ${escapeHtml(sType)} ($${pRate}/pg, ${pNum} page${pNum > 1 ? 's' : ''})`;
+    }
+
+    const totalEl = document.getElementById('clientModalTotalPrice');
+    if (totalEl) {
+        const tPrice = parseFloat(order.total_price || 0).toFixed(2);
+        totalEl.textContent = `$${tPrice} USD`;
+    }
 
     const badge = document.getElementById('clientModalStatusBadge');
     badge.className = `status-badge status-${order.status.toLowerCase().replace(' ', '-')}`;
@@ -1033,3 +1060,78 @@ function escapeHtml(text) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+
+/**
+ * Pricing Selection & Cost Calculation Handlers
+ */
+function selectPricingOption(serviceType, pricePerPage) {
+    const serviceTypeInput = document.getElementById('serviceType');
+    const pricePerPageInput = document.getElementById('pricePerPage');
+    const cardRewriting = document.getElementById('pricingCardRewriting');
+    const cardWriting = document.getElementById('pricingCardWriting');
+
+    if (serviceTypeInput) serviceTypeInput.value = serviceType;
+    if (pricePerPageInput) pricePerPageInput.value = pricePerPage;
+
+    if (serviceType === 'Rewriting') {
+        if (cardRewriting) {
+            cardRewriting.style.border = '2px solid #f7941e';
+            cardRewriting.style.background = '#fff8f0';
+            cardRewriting.classList.add('active');
+        }
+        if (cardWriting) {
+            cardWriting.style.border = '2px solid #cbd5e1';
+            cardWriting.style.background = 'white';
+            cardWriting.classList.remove('active');
+        }
+    } else {
+        if (cardWriting) {
+            cardWriting.style.border = '2px solid #003b6f';
+            cardWriting.style.background = '#eff6ff';
+            cardWriting.classList.add('active');
+        }
+        if (cardRewriting) {
+            cardRewriting.style.border = '2px solid #cbd5e1';
+            cardRewriting.style.background = 'white';
+            cardRewriting.classList.remove('active');
+        }
+    }
+
+    calculateOrderTotal();
+}
+window.selectPricingOption = selectPricingOption;
+
+function changePageCount(delta) {
+    const pageInput = document.getElementById('pageCount');
+    if (!pageInput) return;
+    let current = parseInt(pageInput.value) || 1;
+    current = Math.max(1, Math.min(500, current + delta));
+    pageInput.value = current;
+    calculateOrderTotal();
+}
+window.changePageCount = changePageCount;
+
+function calculateOrderTotal() {
+    const pageInput = document.getElementById('pageCount');
+    const pricePerPageInput = document.getElementById('pricePerPage');
+    const displayTotal = document.getElementById('displayTotalCost');
+    const wordCountEstimate = document.getElementById('wordCountEstimate');
+
+    if (!pageInput || !pricePerPageInput || !displayTotal) return;
+
+    let pages = parseInt(pageInput.value) || 1;
+    if (pages < 1) {
+        pages = 1;
+        pageInput.value = 1;
+    }
+
+    const pricePerPage = parseFloat(pricePerPageInput.value) || 4.0;
+    const total = (pages * pricePerPage).toFixed(2);
+    const words = pages * 275;
+
+    displayTotal.innerHTML = `$${total} <small style="font-size:0.75rem; font-weight:600; color:#64748b;">USD</small>`;
+    if (wordCountEstimate) {
+        wordCountEstimate.textContent = `(~${words.toLocaleString()} words)`;
+    }
+}
+window.calculateOrderTotal = calculateOrderTotal;

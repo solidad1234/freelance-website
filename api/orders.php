@@ -79,6 +79,18 @@ function handle_create_order() {
 
     $subject = sanitize_input($_POST['subject'] ?? '');
     $instructions = sanitize_input($_POST['instructions'] ?? '');
+    $service_type_raw = sanitize_input($_POST['service_type'] ?? '');
+    
+    if (strtolower($service_type_raw) === 'rewriting') {
+        $service_type = 'Rewriting';
+        $price_per_page = 4.00;
+    } else {
+        $service_type = 'Writing / Other';
+        $price_per_page = 5.00;
+    }
+
+    $pages = max(1, (int)($_POST['pages'] ?? 1));
+    $total_price = (float)($pages * $price_per_page);
 
     if (empty($subject) || empty($instructions)) {
         json_response(['error' => 'Please fill in both the assignment subject and requirements.'], 400);
@@ -91,8 +103,8 @@ function handle_create_order() {
     $order_number = '#' . (2000 + $next_id);
 
     // Insert Order into DB
-    $stmt = $db->prepare("INSERT INTO orders (order_number, user_id, subject, instructions, status) VALUES (?, ?, ?, ?, 'Pending')");
-    $stmt->execute([$order_number, $current_user['id'], $subject, $instructions]);
+    $stmt = $db->prepare("INSERT INTO orders (order_number, user_id, subject, instructions, service_type, price_per_page, pages, total_price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending')");
+    $stmt->execute([$order_number, $current_user['id'], $subject, $instructions, $service_type, $price_per_page, $pages, $total_price]);
     $order_id = $db->lastInsertId();
 
     // Process File Attachments
@@ -143,7 +155,11 @@ function handle_create_order() {
     // Send Email Notifications — wrapped in try/catch so mail() failures on
     // shared hosts (InfinityFree blocks mail()) never abort order creation.
     try {
+        $formatted_price = number_format($total_price, 2);
         $client_email_body = "Your order {$order_number} ('{$subject}') has been submitted successfully.\n\n" .
+                             "Service Tier: {$service_type} (\${$price_per_page}/page)\n" .
+                             "Pages: {$pages}\n" .
+                             "Total Estimated Cost: \${$formatted_price} USD\n\n" .
                              "Requirements: {$instructions}\n" .
                              "Attachments: " . (count($uploaded_files) > 0 ? implode(', ', $uploaded_files) : 'None') . "\n\n" .
                              "Our writers are reviewing your order and will contact you within 15 minutes.";
@@ -151,8 +167,13 @@ function handle_create_order() {
     } catch (Exception $e) { /* silent — email failure must not block order */ }
 
     try {
+        $formatted_price = number_format($total_price, 2);
         $admin_email_body = "New order {$order_number} submitted by {$current_user['name']} ({$current_user['email']}, Phone: {$current_user['phone']}).\n\n" .
                             "Subject: {$subject}\n" .
+                            "Service Tier: {$service_type}\n" .
+                            "Rate: \${$price_per_page}/page\n" .
+                            "Pages: {$pages}\n" .
+                            "Total Cost: \${$formatted_price} USD\n\n" .
                             "Instructions: {$instructions}\n" .
                             "Attachments: " . (count($uploaded_files) > 0 ? implode(', ', $uploaded_files) : 'None');
         send_email_notification(ADMIN_EMAIL, "Admin", "NEW ORDER: {$order_number} from {$current_user['name']}", $admin_email_body);
@@ -165,6 +186,10 @@ function handle_create_order() {
             'id' => $order_id,
             'order_number' => $order_number,
             'subject' => $subject,
+            'service_type' => $service_type,
+            'price_per_page' => $price_per_page,
+            'pages' => $pages,
+            'total_price' => $total_price,
             'status' => 'Pending',
             'attachments' => $uploaded_files
         ]

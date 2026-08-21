@@ -314,6 +314,7 @@
               <th>Order #</th>
               <th>Client</th>
               <th>Subject / Topic</th>
+              <th>Pricing / Cost</th>
               <th>Instructions</th>
               <th>Attachments</th>
               <th>Status</th>
@@ -396,6 +397,21 @@
         <div>
           <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Subject / Topic</label>
           <div id="modalOrderSubject" style="font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); margin-top: 4px;"></div>
+        </div>
+
+        <!-- Pricing & Cost Summary Box -->
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">Service & Pricing Tier</span>
+            <span id="modalOrderServiceTier" style="font-size: 1rem; font-weight: 700; color: var(--primary-blue); display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-tag" style="color: var(--primary-orange);"></i> Rewriting ($4.00 / page)
+            </span>
+            <small id="modalOrderPagesCount" style="color: #64748b; font-size: 0.85rem; margin-top: 2px; display: block;"><i class="fas fa-file"></i> 1 Page (~275 words)</small>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 0.75rem; font-weight: 700; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">Total Price</span>
+            <span id="modalOrderTotalPrice" style="font-size: 1.5rem; font-weight: 800; color: #2563eb;">$4.00 <small style="font-size:0.75rem; font-weight:600; color:#64748b;">USD</small></span>
+          </div>
         </div>
 
         <!-- Full Instructions -->
