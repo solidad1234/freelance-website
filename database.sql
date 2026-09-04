@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `phone` VARCHAR(50) DEFAULT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
   `role` ENUM('client', 'admin') NOT NULL DEFAULT 'client',
+  `reset_code` VARCHAR(50) DEFAULT NULL,
+  `reset_expires` DATETIME DEFAULT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX (`email`),

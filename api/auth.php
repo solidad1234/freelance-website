@@ -204,8 +204,12 @@ function handle_forgot_password() {
     $reset_code = sprintf("%06d", mt_rand(100000, 999999));
     $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour validity
 
-    $update = $db->prepare("UPDATE users SET reset_code = ?, reset_expires = ? WHERE id = ?");
-    $update->execute([$reset_code, $expires, $user['id']]);
+    try {
+        $update = $db->prepare("UPDATE users SET reset_code = ?, reset_expires = ? WHERE id = ?");
+        $update->execute([$reset_code, $expires, $user['id']]);
+    } catch (Exception $e) {
+        json_response(['error' => 'Database error updating reset code: ' . $e->getMessage()], 500);
+    }
 
     // Send email notification with reset code — non-fatal
     try {
@@ -254,9 +258,13 @@ function handle_reset_password() {
         json_response(['error' => 'Reset code has expired. Please request a new one.'], 400);
     }
 
-    $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
-    $update = $db->prepare("UPDATE users SET password_hash = ?, reset_code = NULL, reset_expires = NULL WHERE id = ?");
-    $update->execute([$new_hash, $user['id']]);
+    try {
+        $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
+        $update = $db->prepare("UPDATE users SET password_hash = ?, reset_code = NULL, reset_expires = NULL WHERE id = ?");
+        $update->execute([$new_hash, $user['id']]);
+    } catch (Exception $e) {
+        json_response(['error' => 'Database error updating password: ' . $e->getMessage()], 500);
+    }
 
     json_response([
         'success' => true,

@@ -24,8 +24,17 @@ async function checkAuthSession() {
         const res = await fetch('api/auth.php?action=check', {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
-        const data = await res.json();
-        if (data.authenticated && data.user) {
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            const match = text.match(/\{.*\}/s);
+            if (match) {
+                try { data = JSON.parse(match[0]); } catch (_) {}
+            }
+        }
+        if (data && data.authenticated && data.user) {
             currentUser = data.user;
             updateUserNavUI();
             prefillOrderFormWithCurrentUser();
@@ -289,9 +298,18 @@ async function handleLoginSubmit(e) {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            const match = text.match(/\{.*\}/s);
+            if (match) {
+                try { data = JSON.parse(match[0]); } catch (_) {}
+            }
+        }
 
-        if (data.success) {
+        if (data && data.success) {
             currentUser = data.user;
             updateUserNavUI();
             prefillOrderFormWithCurrentUser();
@@ -306,7 +324,7 @@ async function handleLoginSubmit(e) {
             }
         } else {
             alertBox.className = 'alert alert-danger';
-            alertBox.textContent = data.error || 'Login failed.';
+            alertBox.textContent = (data && data.error) ? data.error : 'Login failed.';
             alertBox.style.display = 'block';
         }
     } catch (err) {
@@ -338,9 +356,18 @@ async function handleRegisterSubmit(e) {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            const match = text.match(/\{.*\}/s);
+            if (match) {
+                try { data = JSON.parse(match[0]); } catch (_) {}
+            }
+        }
 
-        if (data.success) {
+        if (data && data.success) {
             // Fill login email field with registered email
             const loginEmailInput = document.getElementById('loginEmail');
             if (loginEmailInput) loginEmailInput.value = email;
@@ -357,7 +384,7 @@ async function handleRegisterSubmit(e) {
             }
         } else {
             alertBox.className = 'alert alert-danger';
-            alertBox.textContent = data.error || 'Registration failed.';
+            alertBox.textContent = (data && data.error) ? data.error : 'Registration failed.';
             alertBox.style.display = 'block';
         }
     } catch (err) {
@@ -926,9 +953,18 @@ async function handleForgotSubmit(e) {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            const match = text.match(/\{.*\}/s);
+            if (match) {
+                try { data = JSON.parse(match[0]); } catch (_) {}
+            }
+        }
 
-        if (data.success) {
+        if (data && data.success) {
             document.getElementById('resetEmail').value = email;
             alertBox.className = 'alert alert-success';
             alertBox.textContent = data.message;
@@ -941,7 +977,7 @@ async function handleForgotSubmit(e) {
             }, 1800);
         } else {
             alertBox.className = 'alert alert-danger';
-            alertBox.textContent = data.error || 'Failed to send reset code.';
+            alertBox.textContent = (data && data.error) ? data.error : 'Failed to send reset code.';
             alertBox.style.display = 'block';
         }
     } catch (err) {
@@ -971,9 +1007,18 @@ async function handleResetSubmit(e) {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            const match = text.match(/\{.*\}/s);
+            if (match) {
+                try { data = JSON.parse(match[0]); } catch (_) {}
+            }
+        }
 
-        if (data.success) {
+        if (data && data.success) {
             alertBox.className = 'alert alert-success';
             alertBox.textContent = data.message;
             alertBox.style.display = 'block';
@@ -983,7 +1028,7 @@ async function handleResetSubmit(e) {
             }, 1800);
         } else {
             alertBox.className = 'alert alert-danger';
-            alertBox.textContent = data.error || 'Password reset failed.';
+            alertBox.textContent = (data && data.error) ? data.error : 'Password reset failed.';
             alertBox.style.display = 'block';
         }
     } catch (err) {
@@ -1030,9 +1075,18 @@ async function handleClientChangePassSubmit(e) {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            const match = text.match(/\{.*\}/s);
+            if (match) {
+                try { data = JSON.parse(match[0]); } catch (_) {}
+            }
+        }
 
-        if (data.success) {
+        if (data && data.success) {
             alertBox.className = 'alert alert-success';
             alertBox.textContent = data.message || 'Password updated successfully!';
             alertBox.style.display = 'block';
@@ -1041,7 +1095,7 @@ async function handleClientChangePassSubmit(e) {
             }, 1500);
         } else {
             alertBox.className = 'alert alert-danger';
-            alertBox.textContent = data.error || 'Failed to update password.';
+            alertBox.textContent = (data && data.error) ? data.error : 'Failed to update password.';
             alertBox.style.display = 'block';
         }
     } catch (err) {

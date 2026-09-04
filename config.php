@@ -31,6 +31,18 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
+// SMTP Settings (REQUIRED for InfinityFree and modern web hosts)
+// InfinityFree disables PHP mail(), so SMTP is required for emails to deliver.
+// Supported SMTP providers: Gmail (use App Password), Brevo, SendGrid, Mailgun, etc.
+define('SMTP_ENABLED', true);                       // Set to true to enable SMTP sending
+define('SMTP_HOST', 'smtp.gmail.com');              // e.g. smtp.gmail.com or smtp-relay.brevo.com
+define('SMTP_PORT', 587);                           // 587 (TLS) or 465 (SSL)
+define('SMTP_USER', 'firstclasswritersk@gmail.com'); // Your SMTP account / email address
+define('SMTP_PASS', '');                            // Your SMTP password or Gmail 16-character App Password
+define('SMTP_SECURE', 'tls');                       // 'tls' or 'ssl'
+define('SMTP_FROM_EMAIL', 'firstclasswritersk@gmail.com');
+define('SMTP_FROM_NAME', SITE_NAME);
+
 /**
  * Get PDO Database Connection
  * Automatically creates database tables if running in SQLite fallback mode or PDO MySQL.
@@ -50,7 +62,10 @@ function get_db() {
         ];
         $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
 
-        // Ensure default Admin user exists in MySQL
+        // Ensure default Admin user exists in MySQL and auto-migrate missing reset columns
+        try { $pdo->exec("ALTER TABLE users ADD COLUMN reset_code VARCHAR(50) DEFAULT NULL"); } catch (Exception $e) {}
+        try { $pdo->exec("ALTER TABLE users ADD COLUMN reset_expires DATETIME DEFAULT NULL"); } catch (Exception $e) {}
+
         try {
             $stmt = $pdo->prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1");
             $stmt->execute();
@@ -221,16 +236,9 @@ function sanitize_input($data) {
 }
 
 /**
- * Send Email Notifications using PHP mail() or configured SMTP
+ * Send Email Notifications using custom SMTP or PHP mail() fallback
  */
 function send_email_notification($to_email, $to_name, $subject, $message_text) {
-    $headers = [];
-    $headers[] = 'MIME-Version: 1.0';
-    $headers[] = 'Content-type: text/html; charset=utf-8';
-    $headers[] = 'From: ' . SITE_NAME . ' <' . ADMIN_EMAIL . '>';
-    $headers[] = 'Reply-To: ' . ADMIN_EMAIL;
-    $headers[] = 'X-Mailer: PHP/' . phpversion();
-
     $html_content = '
     <!DOCTYPE html>
     <html>
@@ -267,7 +275,135 @@ function send_email_notification($to_email, $to_name, $subject, $message_text) {
     </html>
     ';
 
-    // Attempt mail send (returns true on success)
-    @mail($to_email, $subject, $html_content, implode("\r\n", $headers));
-    return true;
+    if (defined('SMTP_ENABLED') && SMTP_ENABLED && !empty(SMTP_HOST) && !empty(SMTP_USER) && !empty(SMTP_PASS)) {
+        return send_smtp_socket_email($to_email, $to_name, $subject, $html_content);
+    }
+
+    // Fallback to PHP mail() (Note: mail() is disabled on InfinityFree)
+    $headers = [];
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'Content-type: text/html; charset=utf-8';
+    $headers[] = 'From: ' . SITE_NAME . ' <' . ADMIN_EMAIL . '>';
+    $headers[] = 'Reply-To: ' . ADMIN_EMAIL;
+    $headers[] = 'X-Mailer: PHP/' . phpversion();
+
+    return @mail($to_email, $subject, $html_content, implode("\r\n", $headers));
+}
+
+/**
+ * Pure PHP SMTP Socket Mailer
+ * Connects directly to external SMTP servers (Gmail, Brevo, SendGrid, Mailgun, etc.)
+ * Works reliably on InfinityFree without requiring Composer packages.
+ */
+function send_smtp_socket_email($to_email, $to_name, $subject, $html_body) {
+    $host = SMTP_HOST;
+    $port = SMTP_PORT;
+    $username = SMTP_USER;
+    $password = SMTP_PASS;
+    $secure = strtolower(SMTP_SECURE ?? 'tls');
+    $from_email = defined('SMTP_FROM_EMAIL') && SMTP_FROM_EMAIL ? SMTP_FROM_EMAIL : $username;
+    $from_name = defined('SMTP_FROM_NAME') && SMTP_FROM_NAME ? SMTP_FROM_NAME : SITE_NAME;
+
+    $context = stream_context_create([
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        ]
+    ]);
+
+    $prefix = ($secure === 'ssl') ? 'ssl://' : 'tcp://';
+    $socket = @stream_socket_client($prefix . $host . ':' . $port, $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $context);
+
+    if (!$socket) {
+        error_log("SMTP Connection failed to {$host}:{$port} - {$errstr} ({$errno})");
+        return false;
+    }
+
+    $read_res = function() use ($socket) {
+        $response = '';
+        while ($line = fgets($socket, 512)) {
+            $response .= $line;
+            if (substr($line, 3, 1) === ' ') break;
+        }
+        return $response;
+    };
+
+    $read_res(); // Read initial SMTP server greeting
+
+    // Send EHLO
+    fputs($socket, "EHLO " . gethostname() . "\r\n");
+    $read_res();
+
+    // STARTTLS for TLS connections (Port 587)
+    if ($secure === 'tls') {
+        fputs($socket, "STARTTLS\r\n");
+        $res = $read_res();
+        if (substr($res, 0, 3) !== '220') {
+            fclose($socket);
+            error_log("SMTP STARTTLS failed: {$res}");
+            return false;
+        }
+
+        $crypto_method = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT;
+        if (defined('STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT')) {
+            $crypto_method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
+        }
+
+        if (!@stream_socket_enable_crypto($socket, true, $crypto_method)) {
+            fclose($socket);
+            error_log("SMTP SSL/TLS Handshake failed");
+            return false;
+        }
+
+        // Re-EHLO over secure TLS tunnel
+        fputs($socket, "EHLO " . gethostname() . "\r\n");
+        $read_res();
+    }
+
+    // Authentication LOGIN
+    fputs($socket, "AUTH LOGIN\r\n");
+    $read_res();
+
+    fputs($socket, base64_encode($username) . "\r\n");
+    $read_res();
+
+    fputs($socket, base64_encode($password) . "\r\n");
+    $res = $read_res();
+    if (substr($res, 0, 3) !== '235') {
+        fclose($socket);
+        error_log("SMTP Authentication failed: {$res}");
+        return false;
+    }
+
+    // Envelope senders and recipients
+    fputs($socket, "MAIL FROM: <{$from_email}>\r\n");
+    $read_res();
+
+    fputs($socket, "RCPT TO: <{$to_email}>\r\n");
+    $read_res();
+
+    // Body DATA payload
+    fputs($socket, "DATA\r\n");
+    $read_res();
+
+    $headers = [
+        "MIME-Version: 1.0",
+        "Content-Type: text/html; charset=UTF-8",
+        "From: =?UTF-8?B?" . base64_encode($from_name) . "?= <{$from_email}>",
+        "To: =?UTF-8?B?" . base64_encode($to_name) . "?= <{$to_email}>",
+        "Subject: =?UTF-8?B?" . base64_encode($subject) . "?=",
+        "Date: " . date('r'),
+        "X-Mailer: PHP/" . phpversion()
+    ];
+
+    $message = implode("\r\n", $headers) . "\r\n\r\n" . $html_body . "\r\n.\r\n";
+    fputs($socket, $message);
+    $res = $read_res();
+
+    // Send QUIT command
+    fputs($socket, "QUIT\r\n");
+    fclose($socket);
+
+    return (substr($res, 0, 3) === '250');
 }
